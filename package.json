@@ -1,0 +1,21 @@
+{
+  "name": "part3",
+  "version": "1.0.0",
+  "description": "Trying out the Express framework",
+  "main": "express.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lucas Jellema",
+  "license": "ISC",
+  "dependencies": {
+    "ansi-to-json": "^1.0.13",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "node-pty": "",
+    "prompt": "^1.0.0",
+    "python": "",
+    "serve-static": "^1.10.2",
+    "strip-ansi": "^5.0.0"
+  }
+}
