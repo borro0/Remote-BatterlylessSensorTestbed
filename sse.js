@@ -31,7 +31,7 @@ var Connection = (function () {
     };
     Connection.prototype.send = function (data) {
         data = stripAnsi(data); // remove all undesired ansi escape codes
-        data = data.replace(/(\n|\r)/gm,""); // remove all undesired return/line feed chars
+        data = data.replace(/(\r\n)/gm,"<br>"); // remove all undesired return/line feed chars
         var json_data = JSON.stringify(data);
         console.log("send event to SSE stream " + json_data);
         this.res.write("data: " + json_data + "\n\n");

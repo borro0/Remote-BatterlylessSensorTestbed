@@ -1,19 +1,18 @@
-const { spawn } = require("node-pty");
+const {spawn: spawn} = require("node-pty");
 
-function start_python(callback) {
-	var pyProcess = spawn("python.exe", ["print_continuously.py"]);
+function start_python(sseConnection) {
+	let pyProcess = spawn("python.exe", ["program.py"]);
 
 	console.log("Starting python");
 
 	pyProcess.on('data', function(data) {
 	  	console.log(data);
-	  	callback(data);
+	  	sseConnection.send(data);
 	});
 
-	pyProcess.on("exit", exitCode => {
-		var exit_string = "Exiting with code " + exitCode
+	pyProcess.on("exit", function(exitCode) {
+		let exit_string = "Exiting with code " + exitCode;
 	  	console.log(exit_string);
-	  	callback(exit_string);
 	});
 }
 

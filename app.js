@@ -5,7 +5,9 @@ var bodyParser = require('body-parser'); // npm install body-parser
 var http = require('http');
 var sseMW = require('./sse');
 var prompt = require('prompt'); //https://www.npmjs.com/package/prompt
-var py = require('./python')
+var py = require('./python');
+var formidable = require('formidable');
+var fs = require('fs');
 
 var APP_VERSION = "0.8";
 
@@ -23,6 +25,12 @@ app.use(express.static(__dirname + '/public'))
 //configure sseMW.sseMiddleware as function to get a stab at incoming requests, in this case by adding a Connection property to the request
 app.use(sseMW.sseMiddleware)
 
+app.post('/fileupload', function (req, res) {
+    let form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        res.sseConnection.send('File uploaded!<br>');
+    });
+});
 
 app.get('/about', function (req, res) {
     res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -39,8 +47,10 @@ app.get('/updates', function (req, res) {
     console.log("sseConnection= ");
     sseConnection.setup();
     sseClients.add(sseConnection);
-});
 
+    // First try to only pass reference of current object to callback
+    py.start_python(sseConnection);
+});
 
 var m;
 updateSseClients = function (message) {
@@ -54,35 +64,3 @@ updateSseClients = function (message) {
     );
 }
 
-//promptForInput();
-py.start_python(updateSseClients);
-
-// go into loop where user can provide input
-var timeToExit = false;
-
-var allInput = [];
-
-function promptForInput() {
-    prompt.get(['yourInput'], function (err, result) {
-        // 
-        // Log the results. 
-        // 
-        console.log('Your Input:' + result.yourInput);
-        // send input to function that forwards it to all SSE clients
-        updateSseClients(result.yourInput);
-        timeToExit = ('exit' == result.yourInput)
-        if (timeToExit) {
-            wrapItUp();
-        }
-        else {
-            allInput.push(result.yourInput);
-            promptForInput();
-        }
-    });
-}
-
-function wrapItUp() {
-    console.log('It was nice talking to you. Goodbye!');
-    // final recap of the dialog:
-    console.log("All your input:\n " + JSON.stringify(allInput));
-}

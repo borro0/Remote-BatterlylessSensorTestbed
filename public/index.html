@@ -1,22 +1,27 @@
 <html>
 <head>
     <title>A static web page with dynamic pushed updated</title>
-        <script>
-	  // assume that API service is published on same server that is the server of this HTML file
-      var source = new EventSource("../updates");
-      source.onmessage = function(event) {
-        var data = JSON.parse(event.data);
-        var inputCell= document.getElementById("input");
-        inputCell.innerHTML = JSON.stringify(data) + ';<br>'+ inputCell.innerHTML; 
-      };//onMessage
-    </script>    
+    <script>
+	    // assume that API service is published on same server that is the server of this HTML file
+        var source = new EventSource("../updates");
+        source.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            var inputCell= document.getElementById("console");
+            inputCell.innerHTML = inputCell.innerHTML + JSON.stringify(data) + "r";
+        };//onMessage
+    </script>
 
 </head>
 <body>
 <h1>Hello World!</h1>
 Are you having fun today?
+<form action="fileupload" method="post" enctype="multipart/form-data">
+<input type="file" name="filetoupload"><br>
+<input type="submit">
+</form>
 <br/>
-<div id="input">
+<div id="console"style="height:500px;width:700px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+    Your output comes here ; <br>
 </div>
 </body>
 </html>
