@@ -64,6 +64,10 @@ var Topic = (function () {
     Topic.prototype.forEach = function (cb) {
         this.connections.forEach(cb);
     };
+    Topic.prototype.getHead = function () {
+        return this.connections[0];
+    };
+
     return Topic;
 } ());
 exports.Topic = Topic;

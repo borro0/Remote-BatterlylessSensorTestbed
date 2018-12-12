@@ -8,9 +8,7 @@ var prompt = require('prompt'); //https://www.npmjs.com/package/prompt
 var py = require('./python');
 var formidable = require('formidable');
 var fs = require('fs');
-
 var APP_VERSION = "0.8";
-
 var PORT = process.env.PORT || 3000;
 
 var app = express();
@@ -20,16 +18,22 @@ server.listen(PORT, function () {
 });
 
 app.use(bodyParser.json()); // for parsing application/json
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/public'));
 
 //configure sseMW.sseMiddleware as function to get a stab at incoming requests, in this case by adding a Connection property to the request
-app.use(sseMW.sseMiddleware)
+app.use(sseMW.sseMiddleware);
 
 app.post('/fileupload', function (req, res) {
     let form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         res.sseConnection.send('File uploaded!<br>');
+        res.end();
     });
+
+    let sseConnection = sseClients.getHead();
+
+    // First try to only pass reference of current object to callback
+    py.start_python(sseConnection);
 });
 
 app.get('/about', function (req, res) {
@@ -47,9 +51,6 @@ app.get('/updates', function (req, res) {
     console.log("sseConnection= ");
     sseConnection.setup();
     sseClients.add(sseConnection);
-
-    // First try to only pass reference of current object to callback
-    py.start_python(sseConnection);
 });
 
 var m;

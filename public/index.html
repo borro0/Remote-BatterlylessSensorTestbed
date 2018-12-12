@@ -15,11 +15,14 @@
 <body>
 <h1>Hello World!</h1>
 Are you having fun today?
-<form action="fileupload" method="post" enctype="multipart/form-data">
-<input type="file" name="filetoupload"><br>
-<input type="submit">
+<form action="fileupload" method="post" enctype="multipart/form-data" target="formtarget">
+    <input type="file" name="filetoupload"><br>
+    <input type="submit">
 </form>
 <br/>
+<iframe name="formtarget"></iframe>
+
+</form>
 <div id="console"style="height:500px;width:700px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
     Your output comes here ; <br>
 </div>
