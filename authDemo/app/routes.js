@@ -1,4 +1,4 @@
-module.exports = function(app, passport) {
+module.exports = function(app, passport, multer) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -51,6 +51,39 @@ module.exports = function(app, passport) {
             user : req.user // get the user out of session and pass to template
         });
     });
+
+    // =====================================
+    // FILE UPLOAD =========================
+    // =====================================
+    // Here we handle file uploading
+
+    var storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, 'uploads')
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.fieldname + '-' + Date.now())
+        }
+    });
+
+    var upload = multer({storage: storage});
+    app.post('/fileUpload', upload.single('image'), isLoggedIn, (req, res, next) => {
+        MongoClient.connect(url, (err, db) => {
+            assert.equal(null, err);
+            insertDocuments(db, 'uploads/' + req.file.filename, () => {
+                db.close();
+                res.json({'message': 'File uploaded successfully'});
+            });
+        });
+    });
+
+    var insertDocuments = function(db, filePath, callback) {
+        var collection = db.collection('user');
+        collection.insertOne({'imagePath' : filePath }, (err, result) => {
+            assert.equal(err, null);
+            callback(result);
+        });
+    }
 
     // =====================================
     // LOGOUT ==============================
