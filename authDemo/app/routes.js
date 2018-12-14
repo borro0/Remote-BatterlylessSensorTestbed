@@ -2,6 +2,8 @@
 var User       = require('./models/user');
 var TestRun    = require('./models/testrun.js');
 var session    = require('express-session');
+var mongoose   = require('mongoose');
+var Gridfs     = require('gridfs-stream');
 
 module.exports = function(app, passport, multer) {
 
@@ -84,17 +86,31 @@ module.exports = function(app, passport, multer) {
     app.post('/fileupload', upload.single('file'), function(req, res, next) {
         sess = req.session;
         console.log("user @ fileupload: " + sess.user);
+        let user_email = sess.email;
+
+        // =====================================================================
+        // THIS CODE IS FOR DEBUGGING ONLY
+        // =====================================================================
+        let user = {
+            _id: 12,
+            local: {
+                email: "borisblokland@gmail.com",
+                password: "123"
+            }
+        }
+        user_email = "borisblokland@gmail.com";
+        // =====================================================================
 
         res.render('profile.ejs', {
-            user : sess.user // get the user out of session and pass to template
+            user : user // get the user out of session and pass to template
         });
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         console.log("email:" + sess.email);
-        console.log('file name:' + req.filename);
-        console.log('file destination:' + req.destination);
+        console.log('file name:' + req.file.filename);
+        console.log('file destination:' + req.file.destination);
 
-        User.findOne({ 'local.email' :  sess.user.email }, function(err, user) {
+        User.findOne({ 'local.email' :  user_email }, function(err, user) {
             // if there are any errors, return the error
             if (err) {
                 console.log("got error: " + err);
