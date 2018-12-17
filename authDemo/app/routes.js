@@ -1,14 +1,17 @@
 // load up the user model
 var User       = require('./models/user');
 var TestRun    = require('./models/testrun.js');
-var session    = require('express-session');
 var mongoose   = require('mongoose');
 var Gridfs     = require('gridfs-stream');
+var py         = require('./python');
 
-module.exports = function(app, passport, multer) {
+module.exports = function(app, passport, multer, sseMW, session) {
 
     // session variable in which session specific information is stored
     var sess; 
+
+    // sse clients, Realtime updates
+    var sseClients = new sseMW.Topic();
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -51,21 +54,45 @@ module.exports = function(app, passport, multer) {
         failureFlash : true // allow flash messages
     }));
 
+    app.get('/updates', function (req, res) {
+        sess = req.session;
+
+        console.log("res (should have sseConnection)= " + res.sseConnection);
+        var sseConnection = res.sseConnection;
+        console.log("sseConnection= ");
+        sseConnection.setup();
+        sseClients.add(sess.email, sseConnection);
+        console.log(`sess.email @ updates ${sess.email}`);
+        sseConnection.send("Hello world!");
+    });
+
     // =====================================
     // PROFILE SECTION =====================
     // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/profile', function(req, res) {
+
         sess = req.session;
-        sess.email = req.user.local.email;
-        sess.user = req.user;
-        console.log("email:" + sess.email);
-        console.log("user @ profile: " + sess.user);
+
+        // =====================================================================
+        // THIS CODE IS PRODUCTION CODE
+        // =====================================================================
+        
+        // sess.email = req.user.local.email;
+        // console.log("email:" + sess.email);
+
+        // =====================================================================
+        // THIS CODE IS FOR DEBUGGING ONLY
+        // =====================================================================
+        sess.email = "borisblokland@gmail.com";
+        // =====================================================================
 
         res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
+            email : sess.email // get the user email out of session and pass to template
         });
+
+
     });
 
     // =====================================
@@ -78,7 +105,8 @@ module.exports = function(app, passport, multer) {
           cb(null, './uploads')
         },
         filename: (req, file, cb) => {
-         cb(null, file.fieldname + '-' + Date.now())
+         //cb(null, file.fieldname + '-' + Date.now())
+         cb(null, file.originalname)
         }
     });
     var upload = multer({storage: storage});
@@ -98,12 +126,21 @@ module.exports = function(app, passport, multer) {
                 password: "123"
             }
         }
-        user_email = "borisblokland@gmail.com";
+        // user_email = "borisblokland@gmail.com";
         // =====================================================================
 
-        res.render('profile.ejs', {
-            user : user // get the user out of session and pass to template
-        });
+        // res.sseConnection.send('File uploaded!<br>');
+        res.send('File uploaded!<br>');
+
+        let sseConnection = sseClients.getConnection(user_email);
+
+        let filepath = req.file.destination + '/' + req.file.filename;
+
+        console.log(`Constructed path: ${filepath}`);
+
+        // First try to only pass reference of current object to callback
+        py.start_python(sseConnection, filepath);
+
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         console.log("email:" + sess.email);
@@ -120,48 +157,17 @@ module.exports = function(app, passport, multer) {
 
             // check to see if theres already a user with that email
             if (user) {
-                console.log("User already exits" + user);
+                console.log("Feel free to update this user");
                 return;
             } else {
 
-                // if there is no user with that email
-                // create the user
-                var newUser            = new User();
-
-                // set the user's local credentials
-                newUser.local.email    = "test";
-                newUser.local.password = "123";
-                newUser.local.testRuns.targetNode = "testNode";
-                newUser.local.testRuns.binary = req.file;
-
-                // save the user
-                newUser.save(function(err) {
-                    if (err) {
-                        console.log("Got error in storing image");
-                        throw err;
-                    }
-                    return;
-                });
+                // could not find this user
+                console.log("Could not find this user");
+                return;
             }
 
         });
-        //console.log(req.user);
     });
-        // MongoClient.connect(url, (err, db) => {
-        //     assert.equal(null, err);
-        //     insertDocuments(db, 'uploads/' + req.file.filename, () => {
-        //         db.close();
-        //         res.json({'message': 'File uploaded successfully'});
-        //     });
-        // });
-
-    var insertDocuments = function(db, filePath, callback) {
-        var collection = db.collection('user');
-        collection.insertOne({'imagePath' : filePath }, (err, result) => {
-            assert.equal(err, null);
-            callback(result);
-        });
-    }
 
     // =====================================
     // LOGOUT ==============================

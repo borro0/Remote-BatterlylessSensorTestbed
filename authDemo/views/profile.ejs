@@ -7,6 +7,15 @@
     <style>
         body        { padding-top:80px; word-wrap:break-word; }
     </style>
+    <script>
+        // assume that API service is published on same server that is the server of this HTML file
+        var source = new EventSource("../updates");
+        source.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            var inputCell= document.getElementById("console");
+            inputCell.innerHTML = inputCell.innerHTML + JSON.stringify(data) + "r";
+        };//onMessage
+    </script>
 </head>
 <body>
 <div class="container">
@@ -18,25 +27,23 @@
 
     <div class="row">
 
-        <!-- LOCAL INFORMATION -->
+        <!-- USER INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Local</h3>
 
                     <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.local.email %><br>
-                        <strong>password</strong>: <%= user.local.password %>
+                        <strong>email</strong>: <%= email %><br>
                     </p>
 
             </div>
         </div>
 
-        <!-- LOCAL INFORMATION -->
+        <!-- UPLOAD FORM -->
         <div class="col-sm-6">
             <div class="well">
                 <!-- LOGIN FORM -->
-                <form action="/fileupload" method="post" enctype="multipart/form-data">
+                <form action="/fileupload" method="post" enctype="multipart/form-data" target="formtarget">
                     <div class="form-group">
                         <label>Test run argument</label>
                         <input type="text" class="form-control" name="argument">
@@ -51,6 +58,22 @@
 
             </div>
         </div>
+
+    </div>
+
+    <iframe name="formtarget"style="display:none"></iframe>
+
+    <div class="row">
+
+        <!-- TERMINAL -->
+        <div class="col-sm-6">
+            <div id="console"class="well">
+                <h3>Terminal</h3>
+                
+            </div>
+        </div>
+
+
 
     </div>
 
