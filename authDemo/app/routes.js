@@ -54,6 +54,10 @@ module.exports = function(app, passport, multer, sseMW, session) {
         failureFlash : true // allow flash messages
     }));
 
+    // =====================================
+    // SERVER SIGNAL EVENTS ================
+    // =====================================
+
     app.get('/updates', function (req, res) {
         sess = req.session;
 
@@ -110,6 +114,10 @@ module.exports = function(app, passport, multer, sseMW, session) {
         }
     });
     var upload = multer({storage: storage});
+
+    app.post('/plugin-fileupload', function(req, res) {
+        res.send({ hello: 'world2' });
+    });
 
     app.post('/fileupload', upload.single('file'), function(req, res, next) {
         sess = req.session;

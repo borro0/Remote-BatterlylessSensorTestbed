@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="com.example.helloworld.commands.category"
+            name="Sample Category">
+      </category>
+      <command
+            categoryId="com.example.helloworld.commands.category"
+            name="Sample Command"
+            id="com.example.helloworld.commands.sampleCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.example.helloworld.handlers.SampleHandler"
+            commandId="com.example.helloworld.commands.sampleCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="com.example.helloworld.commands.sampleCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="com.example.helloworld.menus.sampleMenu"
+               label="Sample Menu"
+               mnemonic="M">
+            <command
+                  commandId="com.example.helloworld.commands.sampleCommand"
+                  id="com.example.helloworld.menus.sampleCommand"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="com.example.helloworld.toolbars.sampleToolbar">
+            <command
+                  id="com.example.helloworld.toolbars.sampleCommand"
+                  commandId="com.example.helloworld.commands.sampleCommand"
+                  icon="icons/sample.png"
+                  tooltip="Say hello world">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.example.helloworld.view.helloworldcategory"
+            name="Hello World!">
+      </category>
+      <view
+            category="com.example.helloworld.view.helloworldcategory"
+            class="com.example.helloworld.view.SampleView"
+            id="com.example.helloworld.view.helloworldview"
+            name="Hello World!"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.example.helloworld.preferences.RemoteTestbedPrefPage"
+            id="com.example.helloworld.preferences.page.page1"
+            name="RemoteTestbed">
+      </page>
+   </extension>
+
+</plugin>
