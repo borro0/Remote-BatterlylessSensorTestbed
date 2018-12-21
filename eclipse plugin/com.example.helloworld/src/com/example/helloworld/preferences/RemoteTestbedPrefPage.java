@@ -1,10 +1,8 @@
 package com.example.helloworld.preferences;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -17,20 +15,16 @@ public class RemoteTestbedPrefPage extends FieldEditorPreferencePage implements 
     }
 
     public void createFieldEditors() {
-        addField(new DirectoryFieldEditor("PATH", "&Directory preference:", getFieldEditorParent()));
-        addField(new BooleanFieldEditor("BOOLEAN_VALUE", "&A boolean preference", getFieldEditorParent()));
-
-        addField(new RadioGroupFieldEditor("CHOICE", "A &multiple-choice preference", 1,
-                new String[][] { { "&Choice 1", "choice1" }, { "C&hoice 2", "choice2" } }, getFieldEditorParent()));
-        addField(new StringFieldEditor("MySTRING1", "A &text preference:", getFieldEditorParent()));
-        addField(new StringFieldEditor("MySTRING2", "A t&ext preference:", getFieldEditorParent()));
+        addField(new DirectoryFieldEditor("binaryPath", "&Directory preference:", getFieldEditorParent()));
+        addField(new StringFieldEditor("email", "A &text preference:", getFieldEditorParent()));
+        addField(new StringFieldEditor("password", "A t&ext preference:", getFieldEditorParent()));
     }
 
     @Override
     public void init(IWorkbench workbench) {
         // second parameter is typically the plug-in id
         setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, "com.example.helloworld.preferences"));
-        setDescription("A demonstration of a preference page implementation");
+        setDescription("Preferences for uploading binary to testbed");
     }
 
 }

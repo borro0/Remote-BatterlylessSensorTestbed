@@ -3,13 +3,13 @@ package com.example.helloworld.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.console.*;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.IOException;
 
@@ -23,6 +23,9 @@ public class SampleHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		
 		System.out.println("Sample command is triggered");
+		
+
+		
 		
 		// Setting up console
 		MessageConsole myConsole = findConsole("BorroConsole");
@@ -39,6 +42,19 @@ public class SampleHandler extends AbstractHandler {
 		} catch (PartInitException e) {
 			System.out.println("Could not connect to or create a console");
 			e.printStackTrace();
+		}
+		
+		// Retrieve settings
+		String email = Platform.getPreferencesService().
+			    getString("com.example.helloworld.preferences", "email", "", null);
+		String password = Platform.getPreferencesService().
+			    getString("com.example.helloworld.preferences", "password", "", null);
+		String binaryPath = Platform.getPreferencesService().
+			    getString("com.example.helloworld.preferences", "binaryPath", "", null);
+		
+		if(!EmailValidator.getInstance().isValid(email))
+		{
+			out.println("Email is not valid!")
 		}
 		
 		// Do HTTP Post
