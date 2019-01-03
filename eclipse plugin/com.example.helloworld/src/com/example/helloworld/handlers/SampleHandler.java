@@ -56,7 +56,7 @@ public class SampleHandler extends AbstractHandler {
 		
 		if (CheckSettings(email, password, binaryPath, out))
 		{
-			out.println("Canceling upload");
+			out.println("Canceling upload, Go to Window->Preferences->RemoteTestbed to update your preferences");
 			return null;
 		}
 		
@@ -116,7 +116,6 @@ public class SampleHandler extends AbstractHandler {
 	{
 		boolean returnValue = false;
 		
-		//if(email == "")
 		if(!(EmailValidator.getInstance().isValid(email)))
 		{
 			out.println("Email is not set!");

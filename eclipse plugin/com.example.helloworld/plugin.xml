@@ -10,7 +10,7 @@
       </category>
       <command
             categoryId="com.example.helloworld.commands.category"
-            name="Sample Command"
+            name="Upload to RemoteTestbed"
             id="com.example.helloworld.commands.sampleCommand">
       </command>
    </extension>
@@ -36,7 +36,7 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="com.example.helloworld.menus.sampleMenu"
-               label="Sample Menu"
+               label="Remote Testbed"
                mnemonic="M">
             <command
                   commandId="com.example.helloworld.commands.sampleCommand"
@@ -44,18 +44,6 @@
                   mnemonic="S">
             </command>
          </menu>
-      </menuContribution>
-      <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="com.example.helloworld.toolbars.sampleToolbar">
-            <command
-                  id="com.example.helloworld.toolbars.sampleCommand"
-                  commandId="com.example.helloworld.commands.sampleCommand"
-                  icon="icons/sample.png"
-                  tooltip="Say hello world">
-            </command>
-         </toolbar>
       </menuContribution>
    </extension>
    <extension
