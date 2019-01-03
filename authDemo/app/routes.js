@@ -115,27 +115,22 @@ module.exports = function(app, passport, multer, sseMW, session) {
     });
     var upload = multer({storage: storage});
 
-    app.post('/plugin-fileupload', function(req, res) {
-        res.send({ hello: 'world2' });
+    app.post('/plugin-fileupload', upload.single('file'), function(req, res) {
+
+        console.log(req.body);
+        console.log(req.file);
+
+        res.send({ 
+            email: req.body.email,
+            password: req.body.password,
+            file: req.file.originalname
+        });
     });
 
     app.post('/fileupload', upload.single('file'), function(req, res, next) {
         sess = req.session;
         console.log("user @ fileupload: " + sess.user);
         let user_email = sess.email;
-
-        // =====================================================================
-        // THIS CODE IS FOR DEBUGGING ONLY
-        // =====================================================================
-        let user = {
-            _id: 12,
-            local: {
-                email: "borisblokland@gmail.com",
-                password: "123"
-            }
-        }
-        // user_email = "borisblokland@gmail.com";
-        // =====================================================================
 
         // res.sseConnection.send('File uploaded!<br>');
         res.send('File uploaded!<br>');
