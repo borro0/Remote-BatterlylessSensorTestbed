@@ -2,16 +2,24 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Helloworld
 Bundle-SymbolicName: com.example.helloworld;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.3.qualifier
 Bundle-Vendor: EXAMPLE
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.console;bundle-version="3.8.300",
  org.eclipse.core.runtime;bundle-version="3.15.100"
 Automatic-Module-Name: com.example.helloworld
-Bundle-RequiredExecutionEnvironment: JavaSE-1.11
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.apache.http;version="4.4.9",
  org.apache.http.client.fluent;version="4.5.5",
  org.apache.http.entity;version="4.4.9",
  org.apache.http.entity.mime;version="4.5.5"
 Bundle-ClassPath: lib/commons-validator-1.6.jar,
  .
+Export-Package: com.example.helloworld.handlers,
+ com.example.helloworld.preferences,
+ com.example.helloworld.view,
+ org.apache.commons.validator,
+ org.apache.commons.validator.resources,
+ org.apache.commons.validator.routines,
+ org.apache.commons.validator.routines.checkdigit,
+ org.apache.commons.validator.util
