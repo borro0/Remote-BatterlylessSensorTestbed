@@ -47,20 +47,6 @@
       </menuContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            id="com.example.helloworld.view.helloworldcategory"
-            name="Hello World!">
-      </category>
-      <view
-            category="com.example.helloworld.view.helloworldcategory"
-            class="com.example.helloworld.view.SampleView"
-            id="com.example.helloworld.view.helloworldview"
-            name="Hello World!"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="com.example.helloworld.preferences.RemoteTestbedPrefPage"

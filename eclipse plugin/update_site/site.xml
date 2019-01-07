@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.example.feature_1.0.9.201901071300.jar" id="com.example.feature" version="1.0.9.201901071300">
+      <category name="RemoteTestbed"/>
+   </feature>
+   <category-def name="RemoteTestbed" label="RemoteTestbed"/>
+</site>

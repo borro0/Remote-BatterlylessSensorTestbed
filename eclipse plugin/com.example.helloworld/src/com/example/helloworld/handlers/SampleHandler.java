@@ -27,12 +27,12 @@ public class SampleHandler extends AbstractHandler {
 		
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		
-		System.out.println("Sample command is triggered");
+		System.out.println("Upload to remote testbed is triggered");
 		
 		// Setting up console
 		MessageConsole myConsole = findConsole("BorroConsole");
 		MessageConsoleStream out = myConsole.newMessageStream();
-		out.println("Hello from Generic console sample action");
+		out.println("Welcome to the remote testbed");
 		
 		// Making console visible
 		IWorkbenchPage page = window.getActivePage();
