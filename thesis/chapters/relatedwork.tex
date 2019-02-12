@@ -1,0 +1,113 @@
+\chapter{Related work}
+\label{chp:related-work}
+
+% introduction of intermittent devices
+
+For batteryless, intermittently powered devices there are no publicly available testbeds. This paper \cite{request} enlists properties and features that such a testbed should have, calling for more coordinated action in this domain research. It also presents a minimal implementation of such a testbed.
+
+There has been extensive research into the field of Wireless Sensor Networks (WSN) testbeds, which have closely related features. Besides these testbeds, several tools exist which help in developing applications for battery less devices. These will be discussed as well.
+
+\section{Energy Harvesting Platforms}
+
+In this section a brief overview is given of energy harvesting platforms by looking at some research and commercial examples.
+
+{\renewcommand{\arraystretch}{1.5}
+\begin{table*}
+\makebox[\linewidth]{ \begin{tabularx}{1.5\textwidth}{sXssssts}
+	\toprule
+	\textbf{Platform} & \textbf{Description} & \textbf{MCU} & \textbf{Radio} & \textbf{Energy Harvester} & \textbf{Energy Source} & \textbf{Year} & \textbf{Citations}\\
+	\midrule
+
+	WISP \cite{wisp} & Family of sensors that are powered and read by UHF RFID readers & MSP430 & \hspace{0pt}Backscattering & Transducer and rectifiers & RF & 2008 & 639 \\
+	
+	Umich Moo \cite{moo} & Improvement on design of WISP & MSP430 & \hspace{0pt}Backscattering & Transducer and rectifiers & RF & 2011 & 63 \\
+	
+	Flicker \cite{flicker} & Configurable development board for batteryless IoT & MSP430 & CC1101, nRF51822, backscattering & Solar cell, transducer and rectifiers, LTC3588,  & Solar, RF, Kinetic & 2017 & 11 \\
+	
+	Capybara \cite{capybara} & Co-designed hardware/software power system with dynamically reconfigurable energy storage capacity & MSP430, CC2650 & CC2650 & TrisolX solar panels, low-power voltage source & Solar, energy source emulation & 2018 & 11 \\
+	
+	Pible \cite{pible} & BLE batterlyless platform & CC2650 & build in MCU & Solar panels & Solar & 2018 & 2 \\	
+
+	\bottomrule
+\end{tabularx}}
+\caption{Research Based Energy Harvesting Platforms.}
+\end{table*}}
+
+{\renewcommand{\arraystretch}{1.5}
+\begin{table*}
+\makebox[\linewidth]{ \begin{tabularx}{1.5\textwidth}{sXssss}
+	
+	\toprule
+	\textbf{Company} & \textbf{Description} & \textbf{MCU} & \textbf{Radio} & \textbf{Energy Harvester} & \textbf{Energy Source}\\
+	\midrule
+	
+	EnOcean & Various battery less solutions for i.e.Building Automation and Smart Home & 8051 processor & TCM 3x0 & ECO 200, ECS 300, ECT 310 Perpetuum & Solar, motion, thermal\\
+
+	Powercast & Provides wireless power solutions, RFID tags, RF power transmitter,  RF power harvester & PIC24F & IEEE 802.15.4 transceiver, TX91502 & PCC110 & RF\\
+	
+	Williot & Makes a batteryless bluetooth beacon device based on RF harvesting & ARM processor & N/A & N/A & RF\\
+	
+	PsiKick & Provides batteryless monitoring solutions to mainly the industry. Related to the university of Virginia and Michigan. & Custom ULP SoC, ARM architecture \cite{customsoc} & Build in SoC & N/A & Solar, thermal\\
+	
+
+	\bottomrule
+\end{tabularx}}
+\caption{Commercial Energy Harvesting Platforms.}
+\end{table*}}
+
+Radio Frequency Identification (RFID) tags are a basic energy harvesting solution available on the market. 
+
+\section{Programming Models For Intermittent Computing}
+
+\section{Wireless Sensor Network Testbeds}
+\label{sec:wireless-sensor-networks}
+%todo{Paraphrase this section, taken from https://www.iotbench.ethz.ch/}
+
+\subsection{FIT IoT-LAB}
+FIT IoT-LAB \cite{FIT-IoT} provides a very large scale infrastructure facility suitable for testing small wireless sensor devices and heterogeneous communicating objects.
+
+IoT-LAB features over 2000 wireless sensor nodes spread across six different sites in France.  Nodes are either fixed or mobile and can be allocated in various topologies throughout all sites.  A variety of wireless sensors are available, with different processor architectures (MSP430, STM32 and Cortex-A8) and different wireless chips (802.15.4 PHY @ 800 MHz or 2.4 GHz).  In addition, “open nodes” can receive custom wireless sensors for inclusion in IoT-LAB testbed.
+
+\subsection{Flocklab}
+
+Flocklab \cite{flocklab} is a wireless sensor network (WSN) testbed, developed and run by the ​Computer Engineering and Networks Laboratory at the ​Swiss Federal Institute of Technology Zurich (ETH Zurich) in Switzerland. FlockLab's key features include:
+\begin{itemize}
+	\item FlockLab's observer based testbed architecture which provides services for detailed testing of sensor nodes:
+	\item Time accurate pin tracing
+	\item Time accurate pin actuation
+	\item Power measurements
+	\item Serial interface logging and writing
+	\item Voltage control to simulate e.g. battery depletion
+\end{itemize}
+
+\subsection{Indriya2}
+
+Indriya2 \cite{indriya2} is a three-dimensional wireless sensor network deployed across three floors of the School of Computing , at the National University of Singapore (NUS). The Testbed facilitates research in sensor network programming environments, communication protocols, system design, and applications. It provides a public, permanent framework for development and testing of sensor network protocols and applications. Users can interact with the Testbed through an intuitive web-based interface designed based on Harvard's Motelab's interface. Registered users can upload executables, associate those executables with motes to create a job, and schedule the job to be run on Testbed. During the job execution, all messages and other data are logged to a database which is presented to the user upon job completion and then can be used for processing and visualization. 
+
+\section{Development Tools For Batteryless Devices}
+
+\subsection{Ekho}
+
+To counter the issue of randomness in a energy harvesting power source, Ekho \cite{ekho} has been developed. This an emulator capable of accurately recreating harvesting conditions in a lab. It reproduces the I-V characteristics of energy harvesting sources, allowing developers to choose from a library of energy traces recorded with various sources and environmental conditions.
+
+\subsection{Flicker}
+%todo{Paraphrase this section}
+Flicker \cite{flicker} is a platform for quickly prototyping batteryless embedded sensors. Flicker is an extensible, modular, “plug and play” architecture that supports RFID, solar, and kinetic energy harvesting; passive and active wireless communication; and a wide range of sensors through common peripheral and harvester interconnects. Flicker supports recent advances in failure-tolerant timekeeping, testing, and debugging, while providing dynamic federated energy storage where peripheral priorities and user tasks can be adjusted without hardware changes.
+
+\subsection{Energy aware debugger}
+%todo{Paraphrase this section}
+The Energy-Interference-Free Debugger (EDB) \cite{edb}, is a tool for monitoring and debugging of intermittent systems without adversely affecting their energy state. EDB recreates a familiar debugging environment for intermittent software and augments it with debugging primitives for effective diagnosis of intermittence bugs.
+
+\section{Contribution}
+The contribution of this thesis is to build a remote accessible testbed, making use of existing tools and platforms. It would be nice if I could re-use the backed server of one of the for mentioned WSNs, because this would require a lot of engineering to do this myself. Flicker would be an ideal platform to use as device under test (DUT), because it supports many peripherals which are software configurable and has the MSP430 as its core, a common micro controller in low-power applications.
+
+Several methods can be used to track the progress and outcome of a test: serial console (printf), GPIO tracing (logic analyzer) and a debugger. Perhaps the energy aware debugger which has some nice features for intermittent devices.
+
+The architecture is shown if Figure \ref{fig:architecture}
+
+\begin{figure}[htb]
+\includegraphics[width=\textwidth]{pics/testbed-architecture-v2}
+\caption{Testbed architecture}
+\label{fig:architecture}
+\end{figure}
+

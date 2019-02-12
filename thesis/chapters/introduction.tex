@@ -1,0 +1,17 @@
+\chapter{Introduction}
+\label{chp:introduction}
+The Internet-of-Things (IoT) is a promising vision which enables trillions of sensor devices to be connected. A common bottleneck for such devices is the energy supply. Batteries are large, expensive, heavy and wear out after several years.
+
+A more sustainable solution than batteries, is energy harvesting where a device collects it's energy from the environment i.e. solar, radio frequency (RF), thermal or kinetic energy.
+
+However, developing software for such devices comes with a challenge. Environmental energy can be scarce, causing frequent power failures. This contrasts with the standard assumption that programs run continuously throughout execution. The programmer has to take care of this intermittent behavior by i.e. storing data to non-volatile memory at certain intervals. The available energy tends to be random, making it difficult to predict how long a program can execute before the next power failure. 
+
+It is hard to conduct repeatable tests due to the random nature of the energy source. While comparing two algorithms, it is impossible to conclude that one algorithm outperforms the other without knowing how much the difference in available energy contributed to the result.
+
+The goal of this thesis is to make a testbed that counters this issue, by using Ekho \cite{ekho}. This an emulator capable of accurately recreating, repeatable harvesting conditions in a lab. The testbed will be made remotely accessible to reduce the effort of setting up such an environment and accelerating development in this field of study.
+
+\vspace{1\baselineskip}
+
+\noindent
+TODO ORGANISATIONAL DESCRIPTION OF THESIS
+
