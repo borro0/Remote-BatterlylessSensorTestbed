@@ -184,3 +184,5 @@ typings/
 #DynamoDB Local files 
 .dynamodb/ 
 authDemo/uploads/
+
+\.buildconfig
