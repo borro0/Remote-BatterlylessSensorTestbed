@@ -1,7 +1,21 @@
 const {spawn: spawn} = require("node-pty");
+const os = require("os");
 
 function start_python(sseConnection, path) {
-	let pyProcess = spawn("python.exe", ["./python/program.py", path]);
+
+	let platform = os.platform();
+
+	console.log(platform)
+
+	let pyProcess;
+	if (platform == 'win32')
+	{
+		pyProcess = spawn(python_path, ["./python/program.py", path]);
+	}
+	else
+	{
+		pyProcess = spawn('python', ["./python/program.py", path]);
+	}
 
 	console.log("Starting python");
 
