@@ -9,10 +9,10 @@ There has been extensive research into the field of Wireless Sensor Networks (WS
 
 \section{Energy Harvesting Platforms}
 
-In this section a brief overview is given of energy harvesting platforms by looking at some research and commercial examples.
+In this section a brief overview is given of energy harvesting platforms by looking at some research and commercial examples. This survey looked into looks at energy harvesting solutions to use in WSNs \cite{energywsn}.
 
 {\renewcommand{\arraystretch}{1.5}
-\begin{table*}
+\begin{table*}\footnotesize
 \makebox[\linewidth]{ \begin{tabularx}{1.5\textwidth}{sXssssts}
 	\toprule
 	\textbf{Platform} & \textbf{Description} & \textbf{MCU} & \textbf{Radio} & \textbf{Energy Harvester} & \textbf{Energy Source} & \textbf{Year} & \textbf{Citations}\\
@@ -20,21 +20,27 @@ In this section a brief overview is given of energy harvesting platforms by look
 
 	WISP \cite{wisp} & Family of sensors that are powered and read by UHF RFID readers & MSP430 & \hspace{0pt}Backscattering & Transducer and rectifiers & RF & 2008 & 639 \\
 	
+	Flexible AD PZT Energy Harvester \cite{aerol} & Self-Powered Wireless Sensor Node Enabled by an Aerosol-Deposited PZT Flexible Energy Harvester & MSP430 & CS2500 & Flexible piezoelectric energy harvester & Kinetic & 2016 & 65\\
+	
 	Umich Moo \cite{moo} & Improvement on design of WISP & MSP430 & \hspace{0pt}Backscattering & Transducer and rectifiers & RF & 2011 & 63 \\
+
+	Monjolo \cite{monjolo} & Energy-Harvesting AC Power metering which draws zero power under zero load conditions & MSP430 & CC2420 & CR2550, LTC3588 & Power line energy harvesting (magnetic field) & 2013 & 45\\
+	
+	SPWTS \cite{spwts} & A novel self-powered wireless temperature sensor based on thermoelectric generators & nRF24LE1 & Build in MCU & TEC12706 & Thermal & 2014 & 31\\
 	
 	Flicker \cite{flicker} & Configurable development board for batteryless IoT & MSP430 & CC1101, nRF51822, backscattering & Solar cell, transducer and rectifiers, LTC3588,  & Solar, RF, Kinetic & 2017 & 11 \\
 	
 	Capybara \cite{capybara} & Co-designed hardware/software power system with dynamically reconfigurable energy storage capacity & MSP430, CC2650 & CC2650 & TrisolX solar panels, low-power voltage source & Solar, energy source emulation & 2018 & 11 \\
 	
-	Pible \cite{pible} & BLE batterlyless platform & CC2650 & build in MCU & Solar panels & Solar & 2018 & 2 \\	
-
+	Pible \cite{pible} & BLE batterlyless platform & CC2650 & Build in MCU & Solar panels & Solar & 2018 & 2 \\	
+	
 	\bottomrule
 \end{tabularx}}
 \caption{Research Based Energy Harvesting Platforms.}
 \end{table*}}
 
 {\renewcommand{\arraystretch}{1.5}
-\begin{table*}
+\begin{table*}\footnotesize
 \makebox[\linewidth]{ \begin{tabularx}{1.5\textwidth}{sXssss}
 	
 	\toprule
@@ -58,6 +64,12 @@ In this section a brief overview is given of energy harvesting platforms by look
 Radio Frequency Identification (RFID) tags are a basic energy harvesting solution available on the market. 
 
 \section{Programming Models For Intermittent Computing}
+\begin{figure}[htb]
+	\includegraphics[width=\textwidth]{pics/taxonomy-tpc}
+	\caption{Taxonomy of several programming models for intermittent computing \cite{tpcthesis}.}
+	\label{fig:architecture}
+\end{figure}
+
 
 \section{Wireless Sensor Network Testbeds}
 \label{sec:wireless-sensor-networks}
