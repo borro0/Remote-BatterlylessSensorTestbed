@@ -11,7 +11,9 @@ class SerialThread (threading.Thread):
 			print("Serial input is currently not supported for windows");
 		else:
 			print("Starting serial input reading")
-			with serial.Serial('/dev/ttyACM1', 9600, timeout=1) as ser:
+			# open serial port, gets closed automatically when out of the 'with' scope
+			with serial.Serial('/dev/ttyACM1', 9600, timeout=1) as ser: 
 				while not self.stop(): # this checks if we should stop or not
-					line = ser.readline()   # read a '\n' terminated line
-					print(line)
+					line = ser.readline() # read a '\n' terminated line
+					if len(line) is not 0: # only print if something was recorded
+						print(line)
