@@ -22,7 +22,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT./media/borro0/Windows/Users/boris/workspace_v8/OutOfBox_MSP430FR5969/targetConfigs/MSP430FR5969.ccxml.TI MSP430 USB1/MSP430" value="OutOfBox_MSP430FR5969"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.C:\Users\boris\workspace_v8\OutOfBox_MSP430FR5969\targetConfigs\MSP430FR5969.ccxml.TI MSP430 USB1/MSP430" value="OutOfBox_MSP430FR5969"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:OutOfBox_MSP430FR5969}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM./home/borro0/Remote-BatterlylessSensorTestbed/OutOfBox_MSP430FR5969/targetConfigs/MSP430FR5969.ccxml.TI MSP430 USB1/MSP430" value="/home/borro0/Remote-BatterlylessSensorTestbed/OutOfBox_MSP430FR5969/Debug/OutOfBox_MSP430FR5969.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM./home/borro0/Remote-BatterlylessSensorTestbed/OutOfBox_MSP430FR5969/targetConfigs/MSP430FR5969.ccxml.TI MSP430 USB1/MSP430" value="/home/borro0/Remote-BatterlylessSensorTestbed/OutOfBox_MSP430FR5969/Release/OutOfBox_MSP430FR5969.out"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.C:\Users\boris\workspace_v8\OutOfBox_MSP430FR5969\targetConfigs\MSP430FR5969.ccxml.TI MSP430 USB1/MSP430" value="C:/Users\boris\workspace_v8\OutOfBox_MSP430FR5969\Release\OutOfBox_MSP430FR5969.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/OutOfBox_MSP430FR5969"/>

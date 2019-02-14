@@ -51,6 +51,8 @@ int mode = 0;                                     // mode selection variable
 int pingHost = 0;                                 // ping request from PC GUI
 Calendar calendar;                                // Calendar used for RTC
 
+void transmitString(uint8_t * string, uint8_t length);
+
 #if defined(__IAR_SYSTEMS_ICC__)
 #pragma location = 0x9000
 __no_init uint16_t dataArray[12289];
@@ -121,7 +123,15 @@ int main(void) {
     Init_Clock();
     Init_UART();
 
-    mode = TRANSMIT_DATA_MODE; // set mode to send uart stuff
+    //mode = TRANSMIT_DATA_MODE; // set mode to send uart stuff
+
+    uint8_t string[6] = "hello\n";
+
+    while (1)
+    {
+        transmitString(string, 6);
+        __delay_cycles(2000000);
+    }
 
     // Main Loop
     while (1)
@@ -285,6 +295,23 @@ void Init_RTC()
 
     //Start RTC Clock
     RTC_B_startClock(RTC_B_BASE);
+}
+
+void transmitString(uint8_t * string, uint8_t length)
+{
+    // Select UART TXD on P2.0
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2, GPIO_PIN0, GPIO_SECONDARY_MODULE_FUNCTION);
+
+    uint8_t i;
+    for (i = 0; i < length; i++)
+    {
+        EUSCI_A_UART_transmitData(EUSCI_A0_BASE, *string++);
+    }
+
+    while(EUSCI_A_UART_queryStatusFlags(EUSCI_A0_BASE, EUSCI_A_UART_BUSY));
+
+    GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN0);
+    GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN0);
 }
 
 /*
