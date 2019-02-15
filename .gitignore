@@ -186,3 +186,5 @@ typings/
 authDemo/uploads/
 
 \.buildconfig
+
+*.class
