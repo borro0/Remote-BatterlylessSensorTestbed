@@ -36,7 +36,7 @@ if platform == "Windows":
 else:
 	flasher = "MSP430Flasher"
 
-subprocess.run([flasher, "-w", binary, "-z", "[VCC,RESET]"]) # Flash and reset MCU
+subprocess.run([flasher, "-w", binary, "-z", "[RESET]"]) # Flash and reset MCU
 
 stop_threads = False
 
@@ -52,5 +52,4 @@ thread_logic_analyzer.join()
 stop_threads = True
 
 #We are done with our measurements, store results in file or database
-
 print("i'm done :D")
