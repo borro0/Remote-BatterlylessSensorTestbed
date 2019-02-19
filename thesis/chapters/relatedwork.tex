@@ -1,4 +1,4 @@
-\chapter{Related work}
+\chapter{Related Work}
 \label{chp:related-work}
 
 The field of energy harvesting devices is promising, but still immature and only a few companies provide such devices commercially. We give an overview of several energy harvesting platforms, both research related and commercial.
@@ -11,7 +11,7 @@ On the other hand there are dozens of existing testbeds for battery-based wirele
 
 Besides these testbeds, we will discuss several tools which help in developing applications for batteryless devices.
 
-\section{Energy harvesting platforms}
+\section{Energy Harvesting Platforms}
 
 In this section a brief overview is given of batteryless energy harvesting platforms using various energy sources. This has been surveyed in \cite{sudevalayam2011energy}, \cite{energywsn} ,\cite{talla2015powering} and \cite{kim2014ambient}. Energy harvesting and it's potential with respect to WSNs has been surveyed in \cite{akhtar2015energy} and \cite{bhatti2016energy}.
 
@@ -74,10 +74,23 @@ Table \ref{tab:researchplatforms} shows some popular and recent developed platfo
 
 
 \section{Programming Models For Intermittent Computing}
+To handle the intermittent behavior of energy harvesting devices, several programming models have been developed. These can be divided into three main categories: out-of-place checkpointing, in-place checkpointing and non-volatile processors shown in Figure \ref{fig:programmingmodels}.
+
+\subsection{Out-of-place Checkpointing}
+Devices using this model save or \textit{checkpoint} the state of the system in external storage. Simply storing the whole state into non-volatile memory (NVM) is not optimal since it requires energy and only changes comparing to the old checkpoint need to be stored.
+
+The programming models can be divided into two sub categories: \textit{proactive} and \textit{reactive} checkpointing systems.\\
+
+\textbf{Proactive systems:} These systems actively checks the voltage level of the energy buffer. When it drops below a certain threshold it can checkpoint the system state. MementOS \cite{ransford2011mementos} was one of the first programming models for intermittent computing. It supports three strategies on when to check the energy buffer: at the end of every loop, at the end of every function or at fixed time intervals.
+
+A downside of this model is that it can lead to data inconsistency. There is always some execution which is not part of any checkpoint. If that execution involves writing to non-volatile variables, the data can become inconsistent. DINO \cite{lucia2015simpler}
+
+
+
 \begin{figure}[htb]
 	\includegraphics[width=\textwidth]{pics/taxonomy-tpc}
 	\caption{Taxonomy of several programming models for intermittent computing \cite{tpcthesis}.}
-	\label{fig:architecture}
+	\label{fig:programmingmodels}
 \end{figure}
 
 
@@ -118,7 +131,7 @@ To counter the issue of randomness in a energy harvesting power source, Ekho \ci
 \todo{Paraphrase this section}
 Flicker \cite{flicker} is a platform for quickly prototyping batteryless embedded sensors. Flicker is an extensible, modular, “plug and play” architecture that supports RFID, solar, and kinetic energy harvesting; passive and active wireless communication; and a wide range of sensors through common peripheral and harvester interconnects. Flicker supports recent advances in failure-tolerant timekeeping, testing, and debugging, while providing dynamic federated energy storage where peripheral priorities and user tasks can be adjusted without hardware changes.
 
-\subsection{Energy aware debugger}
+\subsection{Energy Aware Debugger}
 \todo{Paraphrase this section}
 The Energy-Interference-Free Debugger (EDB) \cite{edb}, is a tool for monitoring and debugging of intermittent systems without adversely affecting their energy state. EDB recreates a familiar debugging environment for intermittent software and augments it with debugging primitives for effective diagnosis of intermittence bugs.
 

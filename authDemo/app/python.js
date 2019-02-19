@@ -4,18 +4,21 @@ const os = require("os");
 function start_python(sseConnection, path) {
 
 	let platform = os.platform();
+	let python_path;
+	let time = 3;
 
 	console.log(platform)
 
-	let pyProcess;
 	if (platform == 'win32')
 	{
-		pyProcess = spawn(python_path, ["./python/program.py", path]);
+		python_path = "python.exe";
 	}
 	else
 	{
-		pyProcess = spawn('python', ["./python/program.py", path]);
+		python_path = "python";
 	}
+
+	let pyProcess = spawn(python_path, ["./python/program.py", path, "3"]);
 
 	console.log("Starting python");
 
