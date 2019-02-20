@@ -1,9 +1,9 @@
 // load up the user model
 var User       = require('./models/user');
-var TestRun    = require('./models/testrun.js');
 var mongoose   = require('mongoose');
 var Gridfs     = require('gridfs-stream');
 var py         = require('./python');
+var fs         = require('fs');
 
 module.exports = function(app, passport, multer, sseMW, session) {
 
@@ -92,11 +92,31 @@ module.exports = function(app, passport, multer, sseMW, session) {
         sess.email = "borisblokland@gmail.com";
         // =====================================================================
 
-        res.render('profile.ejs', {
-            email : sess.email // get the user email out of session and pass to template
+        User.findOne({ 'local.email' :  sess.email }, function(err, user) {
+            // if there are any errors, return the error
+            if (err) {
+                console.log("got error: " + err);
+                throw err;
+                return;
+            }
+
+            // check to see if theres already a user with that email
+            if (user) 
+            {
+                console.log("Found user");
+                res.render('profile.ejs', {
+                    email : sess.email, // get the user email out of session and pass to template
+                    user : user         // pass the user as variable
+                });
+                return;
+            } else {
+
+                // could not find this user
+                console.log("Could not find this user");
+                return;
+            }
+
         });
-
-
     });
 
     // =====================================
@@ -127,28 +147,31 @@ module.exports = function(app, passport, multer, sseMW, session) {
         });
     });
 
+    app.get('/download', function(req, res){
+        var file = './python/OutOfBox_MSP430FR5969.txt';
+        res.download(file); // Set disposition and send it.
+    });
+
     app.post('/fileupload', upload.single('file'), function(req, res, next) {
         sess = req.session;
         console.log("user @ fileupload: " + sess.user);
         let user_email = sess.email;
 
-        // res.sseConnection.send('File uploaded!<br>');
+        user_email = "borisblokland@gmail.com";
+
         res.send('File uploaded!<br>');
 
         let sseConnection = sseClients.getConnection(user_email);
-
         let filepath = req.file.destination + '/' + req.file.filename;
 
         console.log(`Constructed path: ${filepath}`);
-
-        // First try to only pass reference of current object to callback
-        py.start_python(sseConnection, filepath);
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         console.log("email:" + sess.email);
         console.log('file name:' + req.file.filename);
         console.log('file destination:' + req.file.destination);
+
 
         User.findOne({ 'local.email' :  user_email }, function(err, user) {
             // if there are any errors, return the error
@@ -161,6 +184,22 @@ module.exports = function(app, passport, multer, sseMW, session) {
             // check to see if theres already a user with that email
             if (user) {
                 console.log("Feel free to update this user");
+                let newDate = new Date();
+                let file = fs.readFileSync('./python/OutOfBox_MSP430FR5969.txt');
+                let index = user.addTestrun(
+                    {
+                        'date': newDate,
+                        //'binary': file, do not upload binaries for now
+                        'status': "pending"
+                    }
+                );
+                console.log(index);
+                console.log(user.local.testRuns[index]);
+                console.log(user.local.testRuns[index]._id);
+
+                // First try to only pass reference of current object to callback
+                py.start_python(sseConnection, filepath, user.local.testRuns[index]._id);
+
                 return;
             } else {
 

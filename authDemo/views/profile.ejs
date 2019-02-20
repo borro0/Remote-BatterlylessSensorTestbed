@@ -13,7 +13,7 @@
         source.onmessage = function(event) {
             var data = JSON.parse(event.data);
             var inputCell= document.getElementById("console");
-            inputCell.innerHTML = inputCell.innerHTML + JSON.stringify(data) + "r";
+            inputCell.innerHTML = inputCell.innerHTML + JSON.stringify(data);
         };//onMessage
     </script>
 </head>
@@ -28,7 +28,7 @@
     <div class="row">
 
         <!-- USER INFORMATION -->
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Local</h3>
 
@@ -40,7 +40,7 @@
         </div>
 
         <!-- UPLOAD FORM -->
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div class="well">
                 <!-- LOGIN FORM -->
                 <form action="/fileupload" method="post" enctype="multipart/form-data" target="formtarget">
@@ -65,16 +65,54 @@
 
     <div class="row">
 
+        <!-- TESTRUNS -->
+        <div class="col-md-12">
+            <div class="well">
+                <h3><span class="fa fa-wrench"></span> Testruns</h3>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Results</th>
+                        <th>Status</th>               
+                    </tr>    
+                    </thead>
+                    <tbody>  
+
+                    <% user.local.testRuns.forEach(function(testrun){ %>
+                        <tr>                  
+                            <td><%= testrun.date %></td>
+                            <td><a href="/download" >results</a></td>
+                            <td><%= testrun.status %></td>
+                        </tr> 
+                    <% }); %>       
+
+                    </tbody>
+                  </table>
+
+
+
+
+
+
+                <div id="testruns">              
+                </div>    
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
         <!-- TERMINAL -->
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div id="console"class="well">
                 <h3>Terminal</h3>
                 
             </div>
         </div>
 
-
-
+        
     </div>
 
 </div>

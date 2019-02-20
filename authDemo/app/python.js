@@ -24,7 +24,7 @@ function start_python(sseConnection, path) {
 
 	pyProcess.on('data', function(data) {
 	  	console.log(data);
-	  	sseConnection.send(data);
+	  	//sseConnection.send(data); disable this for now TODO uncomment this
 	});
 
 	pyProcess.on("exit", function(exitCode) {

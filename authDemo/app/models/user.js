@@ -1,7 +1,6 @@
 // load the things we need
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
-var testRun  = require('./testrun.js');
 
 // define the schema for our user model
 var userSchema = mongoose.Schema({
@@ -10,17 +9,20 @@ var userSchema = mongoose.Schema({
 
         email        : String,
         password     : String,
-        testRuns     : {
+        testRuns     : [{
 
             date        : Date,
-            targetNode  : String,
-            status      : String,
             binary      : Buffer,
-            result      : Buffer
+            status      : String
+            //targetNode  : String,
+            //result      : Buffer
             
-        }
+        }]
     }
 
+}, 
+{
+  usePushEach: true
 });
 
 // methods ======================
@@ -33,6 +35,17 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
+
+userSchema.methods.addTestrun = function(testRun) {
+    let size = this.local.testRuns.push(testRun);
+    this.save(function(err) {
+        if (err)
+        {
+            throw err;
+        }
+    });
+    return size-1; // return latest index = size-1
+}
 
 // create the model for users and expose it to our app
 module.exports = mongoose.model('User', userSchema);
