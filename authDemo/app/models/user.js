@@ -11,9 +11,10 @@ var userSchema = mongoose.Schema({
         password     : String,
         testRuns     : [{
 
-            date        : Date,
-            binary      : Buffer,
-            status      : String
+            date                : Date,
+            binary              : Buffer,
+            outputTraceFilePath : String,
+            status              : String
             //targetNode  : String,
             //result      : Buffer
             

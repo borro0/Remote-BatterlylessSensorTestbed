@@ -147,9 +147,36 @@ module.exports = function(app, passport, multer, sseMW, session) {
         });
     });
 
-    app.get('/download', function(req, res){
-        var file = './python/OutOfBox_MSP430FR5969.txt';
-        res.download(file); // Set disposition and send it.
+    app.get('/download/:tagid', function(req, res){
+        console.log(req.params.tagid);
+        User.findOne({ 'local.email' :  "borisblokland@gmail.com" }, function(err, user) {
+            // if there are any errors, return the error
+            if (err) {
+                console.log("got error: " + err);
+                throw err;
+                return;
+            }
+
+            // check to see if theres already a user with that email
+            if (user) {
+                console.log(user)
+                console.log(user.local.testRuns[1].binary)
+
+
+                res.setHeader('Content-Disposition', 'attachment; filename=' + "binary.txt");
+                res.setHeader('Content-Transfer-Encoding', 'binary');
+                res.setHeader('Content-Type', 'application/octet-stream')
+                
+                res.send(user.local.testRuns[1].binary);
+                return;
+            } else {
+
+                // could not find this user
+                console.log("Could not find this user");
+                return;
+            }
+
+        });
     });
 
     app.post('/fileupload', upload.single('file'), function(req, res, next) {
@@ -189,7 +216,7 @@ module.exports = function(app, passport, multer, sseMW, session) {
                 let index = user.addTestrun(
                     {
                         'date': newDate,
-                        //'binary': file, do not upload binaries for now
+                        'binary': file,
                         'status': "pending"
                     }
                 );
