@@ -1,7 +1,7 @@
 const {spawn: spawn} = require("node-pty");
 const os = require("os");
 
-function start_python(sseConnection, path) {
+function start_python(sseConnection, path, id) {
 
 	let platform = os.platform();
 	let python_path;
@@ -18,13 +18,13 @@ function start_python(sseConnection, path) {
 		python_path = "python";
 	}
 
-	let pyProcess = spawn(python_path, ["./python/program.py", path, "3"]);
+	let pyProcess = spawn(python_path, ["./python/program.py", path, "3", id]);
 
 	console.log("Starting python");
 
 	pyProcess.on('data', function(data) {
 	  	console.log(data);
-	  	//sseConnection.send(data); disable this for now TODO uncomment this
+	  	sseConnection.send(data);
 	});
 
 	pyProcess.on("exit", function(exitCode) {

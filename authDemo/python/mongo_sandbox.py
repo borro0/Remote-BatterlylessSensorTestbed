@@ -16,7 +16,7 @@ collection = db.users
 #5c6d70ce5e0ee62337b47db3,
 
 #myquery = {"local.email" : "borisblokland@gmail.com"}
-myquery = {"local.testRuns._id" : ObjectId('5c6d70ce5e0ee62337b47db3')}
+myquery = {"testRuns._id" : ObjectId('5c6d70ce5e0ee62337b47db3')}
 newvalues = { "$set": { "local.testRuns.$.status": "done" } }
 
 collection.update_one(myquery, newvalues)

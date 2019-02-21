@@ -5,22 +5,20 @@ var bcrypt   = require('bcrypt-nodejs');
 // define the schema for our user model
 var userSchema = mongoose.Schema({
 
-    local            : {
 
-        email        : String,
-        password     : String,
-        testRuns     : [{
+    email        : String,
+    password     : String,
+    testRuns     : [{
 
-            date                : Date,
-            binary              : Buffer,
-            outputTraceFilePath : String,
-            status              : String
-            //targetNode  : String,
-            //result      : Buffer
-            
-        }]
-    }
+        date     : Date,
+        status   : String,
+        firmware : {
 
+            data : Buffer,
+            filename : String,
+            filetype : String
+        }
+    }]
 }, 
 {
   usePushEach: true
@@ -34,11 +32,11 @@ userSchema.methods.generateHash = function(password) {
 
 // checking if password is valid
 userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.local.password);
+    return bcrypt.compareSync(password, this.password);
 };
 
 userSchema.methods.addTestrun = function(testRun) {
-    let size = this.local.testRuns.push(testRun);
+    let size = this.testRuns.push(testRun);
     this.save(function(err) {
         if (err)
         {

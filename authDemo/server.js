@@ -8,6 +8,7 @@ var passport = require('passport');
 var multer 	 = require('multer');
 var flash    = require('connect-flash');
 var sseMW    = require('./app/sse');
+var reload   = require('reload');
 
 var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -47,10 +48,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
+app.use(express.static(__dirname + '/public'));
 
 // routes ======================================================================
 require('./app/routes.js')(app, passport, multer, sseMW, session); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 app.listen(port);
+
+// Reload code here
+reload(app);
+
 console.log('The magic happens on port ' + port);

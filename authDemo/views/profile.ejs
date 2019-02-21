@@ -1,30 +1,82 @@
 <!doctype html>
 <html>
 <head>
-    <title>Node Authentication</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <style>
-        body        { padding-top:80px; word-wrap:break-word; }
-    </style>
-    <script>
-        // assume that API service is published on same server that is the server of this HTML file
-        var source = new EventSource("../updates");
-        source.onmessage = function(event) {
-            var data = JSON.parse(event.data);
-            var inputCell= document.getElementById("console");
-            inputCell.innerHTML = inputCell.innerHTML + JSON.stringify(data);
-        };//onMessage
-    </script>
+  <title>Node Authentication</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <style>
+      body        { word-wrap:break-word; }
+  </style>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  
+  <script>
+      // assume that API service is published on same server that is the server of this HTML file
+      var source = new EventSource("../updates");
+      source.onmessage = function(event) {
+          var data = JSON.parse(event.data);
+          var inputCell= document.getElementById("console");
+          console.log(data);
+          if(data["_id"])
+          {
+            var tableCell = document.getElementById("testruntable");
+            var output = `
+
+                <tr>
+                  <th>Id</th>
+                  <th>Date</th>
+                  <th>Firmware</th>
+                  <th>Status</th>               
+                </tr> 
+                `;
+
+            tableCell.tbody.append(output);
+            console.log("got user data");
+          }
+          else
+          {
+            inputCell.innerHTML = inputCell.innerHTML + data;
+          }
+      };//onMessage
+  </script>
+
+  <script>
+  $(document).ready(function(){
+    $("button").click(function(){
+
+      var queryCount = {
+          email:'borisblokland@gmail.com'
+      }
+
+      $.ajax({
+        type: 'GET',
+        data: queryCount,
+        url: '/user',
+        dataType: 'JSON'
+      }).done(function(response) {
+        //Check for successful (blank) response
+        if(response.msg === '') {
+          console.log("no response")
+        } else {
+          console.log(response)
+        }
+      });
+    });
+  });
+  </script>
+
 </head>
 <body>
-<div class="container">
 
+<button>Test Ajax</button>
+
+<div class="container">
+    
     <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Profile Page</h1>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
-
+    
     <div class="row">
 
         <!-- USER INFORMATION -->
@@ -58,62 +110,63 @@
 
             </div>
         </div>
-
     </div>
 
     <iframe name="formtarget"style="display:none"></iframe>
 
     <div class="row">
+      <!-- TESTRUNS -->
+      <div class="col-md-12">
+        <div class="well">
+          <h3><span class="fa fa-wrench"></span> Testruns</h3>
+          <div class="table-wrapper-scroll-y">
+            <table class="table table-striped" id="testruntable">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Date</th>
+                  <th>Firmware</th>
+                  <th>Status</th>               
+                </tr>    
+                </thead>
+                <tbody>  
+                  <% user.testRuns.reverse().forEach(function(testrun, i){ %>
+                    <tr> 
+                      <td><%= testrun._id %></td>         
+                      <td><%= testrun.date %></td>
+                      
+                      <td><a <%= "href=/download/"+i %>> 
+                          <%= testrun.firmware.filename + "." + testrun.firmware.filetype %> 
+                      </a></td>
+                      <td><%= testrun.status %></td>
+                    </tr> 
+                  <% }); %> 
 
-        <!-- TESTRUNS -->
-        <div class="col-md-12">
-            <div class="well">
-                <h3><span class="fa fa-wrench"></span> Testruns</h3>
-
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Results</th>
-                        <th>Status</th>               
-                    </tr>    
-                    </thead>
-                    <tbody>  
-
-                    <% user.local.testRuns.forEach(function(testrun){ %>
-                        <tr>                  
-                            <td><%= testrun.date %></td>
-                            <td><a href="/download/1234" >results</a></td>
-                            <td><%= testrun.status %></td>
-                        </tr> 
-                    <% }); %>       
-
-                    </tbody>
-                  </table>
-
-
-
-
-
-
-                <div id="testruns">              
-                </div>    
+                </tbody>
+                </table>
             </div>
+            <div id="testruns">              
+            </div>    
         </div>
+      </div>
     </div>
 
     <div class="row">
 
         <!-- TERMINAL -->
-        <div class="col-md-6">
-            <div id="console"class="well">
-                <h3>Terminal</h3>
-                
+        <div class="col-lg-12">
+            <div class="terminal-wrapper-scroll-y">
+                <div id="console"class="well">
+                    <h3>Terminal</h3>
+                    
+                </div>
             </div>
         </div>
 
         
     </div>
+
+
 
 </div>
 </body>
