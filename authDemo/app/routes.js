@@ -106,7 +106,7 @@ module.exports = function(app, passport, multer, sseMW, session) {
                 console.log("Found user");
                 res.render('profile.ejs', {
                     email : sess.email, // get the user email out of session and pass to template
-                    user : user         // pass the user as variable
+                    user : JSON.stringify(user)         // pass the user as variable
                 });
                 return;
             } else {
@@ -202,7 +202,7 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
         res.send('File uploaded!<br>');
 
-        let sseConnection = sseClients.getConnection(user_email);
+        var sseConnection = sseClients.getConnection(user_email);
         
         let filepath = '';
         if(req.file) // check if file is given
@@ -237,12 +237,11 @@ module.exports = function(app, passport, multer, sseMW, session) {
                 console.log("Feel free to update this user");
 
                 let newDate = new Date(); // get current date
-                newDate.setTime( newDate.getTime() + 1 * 60 * 60 * 1000 );
+                // newDate.setTime( newDate.getTime() + 1 * 60 * 60 * 1000 );
                 newDate.toISOString().slice(0,24);
                 let file = fs.readFileSync(filepath); // read uploaded file from filesystem
                 
                 // get the filename and filetype
-                
                 let filetype = filename.pop();
                 filename = filename.join();
                 console.log(`Filename: ${filename}.${filetype}`);
@@ -261,21 +260,11 @@ module.exports = function(app, passport, multer, sseMW, session) {
                     }
                 );
 
-                // To do this, you must remove the iframe target in profile.ejs
-                // res.render('profile.ejs', {
-                //     email : user_email, // get the user email out of session and pass to template
-                //     user : user         // pass the user as variable
-                // });
-
-                // First try to only pass reference of current object to callback
-                sseConnection.send("Something\r\n");
-                
                 sseConnection.send(user);
                 py.start_python(sseConnection, filepath, user.testRuns[index]._id);
                 
 
             } else {
-
                 // could not find this user
                 console.log("Could not find this user");
                 return;
