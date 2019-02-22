@@ -39,7 +39,6 @@
     $(function() { 
       function my_fun(user){ // jquery function to update table
         let result = buildTableRows(user);
-        console.log(result)
         $("table tbody").replaceWith(result);
       }  
       update_table = my_fun; // store function in variable to access it from js
@@ -52,8 +51,7 @@
       var inputCell= document.getElementById("console");
       if(data["_id"]) // if data is passed, update table
       {
-        console.log(data['index']);
-        update_table(data, data["index"]);
+        update_table(data);
       }
       else // else just output what we received
       {
