@@ -10,7 +10,7 @@ var userSchema = mongoose.Schema({
     password     : String,
     testRuns     : [{
 
-        date     : Date,
+        date     : String,
         status   : String,
         firmware : {
 

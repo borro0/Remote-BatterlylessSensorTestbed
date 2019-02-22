@@ -12,18 +12,21 @@
   
   <script>
 
-    function buildTableRow(testrun, index)
+    function buildTableRows(user)
     {
-        let markup = `
+        let markup = '';
+        user.testRuns.reverse().forEach(function(testrun, i){
+        markup += `
         <tr> 
           <td>${testrun._id}</td>         
           <td>${testrun.date}</td>
-          <td><a href="/download/${index}"> 
+          <td><a href="/download/${i}"> 
             ${testrun.firmware.filename}.${testrun.firmware.filetype}
           </a></td>
           <td>${testrun.status}</td>
         </tr> 
         `;
+        });
         return markup;
     }
 
@@ -32,8 +35,8 @@
 
     $(function() { 
 
-      function my_fun(data){ // jquery function
-        $("table tbody").prepend(buildTableRow(data,data['index']));
+      function my_fun(user){ // jquery function
+        $("table tbody").replaceWith(buildTableRows(user);
       }  
 
       update_table = my_fun; // store function in variable to access it from js
@@ -47,6 +50,7 @@
         console.log(data);
         if(data["_id"])
         {
+          console.log(data['index']);
           let markup = update_table(data, data["index"]);
           console.log(markup);
         }

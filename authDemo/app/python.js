@@ -18,9 +18,8 @@ function start_python(sseConnection, path, id) {
 		python_path = "python";
 	}
 
-	let pyProcess = spawn(python_path, ["./python/program.py", path, "3", id]);
-
 	console.log("Starting python");
+	let pyProcess = spawn(python_path, ["./python/program.py", path, `${time}`, `${id}`]);
 
 	pyProcess.on('data', function(data) {
 	  	console.log(data);

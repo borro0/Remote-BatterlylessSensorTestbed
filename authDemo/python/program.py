@@ -51,12 +51,16 @@ if hardware:
 
 else:
 	# Do something to compensate for hardware
-	print(test_run_id)
+	pass
 
 # Connect to database to update test results
 client = MongoClient()
 db = client.auth_demo
 collection = db.users
+
+# Unstringify the test_run_id
+test_run_id = test_run_id.replace('"', '')
+print(test_run_id)
 
 # Query to set status to done
 myquery = {"testRuns._id" : ObjectId(test_run_id)}

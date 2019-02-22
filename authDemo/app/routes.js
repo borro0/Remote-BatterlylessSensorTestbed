@@ -237,6 +237,8 @@ module.exports = function(app, passport, multer, sseMW, session) {
                 console.log("Feel free to update this user");
 
                 let newDate = new Date(); // get current date
+                newDate.setTime( newDate.getTime() + 1 * 60 * 60 * 1000 );
+                newDate.toISOString().slice(0,24);
                 let file = fs.readFileSync(filepath); // read uploaded file from filesystem
                 
                 // get the filename and filetype
@@ -267,8 +269,8 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
                 // First try to only pass reference of current object to callback
                 sseConnection.send("Something\r\n");
-                user.testRuns[index]['index'] = index;
-                sseConnection.send(user.testRuns[index]);
+                
+                sseConnection.send(user);
                 py.start_python(sseConnection, filepath, user.testRuns[index]._id);
                 
 
