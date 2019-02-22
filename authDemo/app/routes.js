@@ -224,9 +224,6 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
         console.log(`Constructed path: ${filepath}`);
 
-
-
-
         User.findOne({ 'email' :  user_email }, function(err, user) {
             // if there are any errors, return the error
             if (err) {
@@ -270,7 +267,8 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
                 // First try to only pass reference of current object to callback
                 sseConnection.send("Something\r\n");
-                sseConnection.send(user);
+                user.testRuns[index]['index'] = index;
+                sseConnection.send(user.testRuns[index]);
                 py.start_python(sseConnection, filepath, user.testRuns[index]._id);
                 
 
