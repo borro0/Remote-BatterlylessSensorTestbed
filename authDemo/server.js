@@ -14,6 +14,7 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
+var reload = require('reload')
 
 var configDB = require('./config/database.js');
 
@@ -53,10 +54,13 @@ app.use(express.static(__dirname + '/public'));
 // routes ======================================================================
 require('./app/routes.js')(app, passport, multer, sseMW, session); // load our routes and pass in our app and fully configured passport
 
+// Reload code here
+console.log("reloading app")
+reload(app);
+
 // launch ======================================================================
 app.listen(port);
 
-// Reload code here
-reload(app);
+
 
 console.log('The magic happens on port ' + port);

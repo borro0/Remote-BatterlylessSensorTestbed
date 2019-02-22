@@ -43,7 +43,7 @@ userSchema.methods.addTestrun = function(testRun) {
             throw err;
         }
     });
-    return size-1; // return latest index = size-1
+    return size- 1; // return latest index = size-1
 }
 
 // create the model for users and expose it to our app
