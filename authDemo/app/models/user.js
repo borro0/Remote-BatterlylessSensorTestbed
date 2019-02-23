@@ -2,23 +2,28 @@
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 
+// define schema for files
+var fileSchema = mongoose.Schema({
+    data        : Buffer,
+    filename    : String,
+    filetype    : String 
+});
+
+// define schema for testRuns
+var testRunSchema = mongoose.Schema({
+    date     : String,
+    status   : String,
+    trace    : fileSchema,
+    firmware : fileSchema    
+})
+
 // define the schema for our user model
 var userSchema = mongoose.Schema({
 
 
     email        : String,
     password     : String,
-    testRuns     : [{
-
-        date     : String,
-        status   : String,
-        firmware : {
-
-            data : Buffer,
-            filename : String,
-            filetype : String
-        }
-    }]
+    testRuns     : [testRunSchema]
 }, 
 {
   usePushEach: true
@@ -44,6 +49,14 @@ userSchema.methods.addTestrun = function(testRun) {
         }
     });
     return size- 1; // return latest index = size-1
+}
+
+userSchema.methods.stripBinary = function(testRun) {
+    this.testRuns.forEach(function(testRun)
+    {
+        testRun.firmware.data = '';
+    });
+    return this;
 }
 
 // create the model for users and expose it to our app

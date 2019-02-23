@@ -36,6 +36,7 @@ if hardware:
 
 	subprocess.run([flasher, "-w", binary, "-z", "[RESET]"]) # Flash and reset MCU
 
+
 	stop_threads = False
 
 	# We now start the logic analyser
@@ -49,9 +50,6 @@ if hardware:
 	thread_logic_analyzer.join()
 	stop_threads = True
 
-else:
-	# Do something to compensate for hardware
-	pass
 
 # Connect to database to update test results
 client = MongoClient()

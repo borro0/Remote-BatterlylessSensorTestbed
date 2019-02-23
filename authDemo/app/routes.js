@@ -79,27 +79,11 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
         sess = req.session;
 
-        // =====================================================================
-        // THIS CODE IS PRODUCTION CODE
-        // =====================================================================
-        
         // sess.email = req.user.email;
-        // console.log("email:" + sess.email);
-
-        // =====================================================================
-        // THIS CODE IS FOR DEBUGGING ONLY
-        // =====================================================================
         sess.email = "borisblokland@gmail.com";
         // =====================================================================
 
         User.findOne({ 'email' :  sess.email }, function(err, user) {
-            // if there are any errors, return the error
-            if (err) {
-                console.log("got error: " + err);
-                throw err;
-                return;
-            }
-
             // check to see if theres already a user with that email
             if (user) 
             {
@@ -110,7 +94,6 @@ module.exports = function(app, passport, multer, sseMW, session) {
                 });
                 return;
             } else {
-
                 // could not find this user
                 console.log("Could not find this user");
                 return;
@@ -148,47 +131,32 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
     app.get('/download/:index', function(req, res){
         let index = req.params.index;
-        console.log(index);
         User.findOne({ 'email' :  "borisblokland@gmail.com" }, function(err, user) {
-            // if there are any errors, return the error
-            if (err) {
-                console.log("got error: " + err);
-                throw err;
-                return;
-            }
-
             // check to see if theres already a user with that email
             if (user) {
-                console.log(user);
-                console.log(user.testRuns[index].firmware.filename);
-
+                // create variables for response
                 let name = user.testRuns[index].firmware.filename;
                 let type = user.testRuns[index].firmware.filetype;
                 let file = user.testRuns[index].firmware.data
 
-                let fullname = `${name}.${type}`;
-                console.log(fullname);
-
+                // set headers for downloading
                 res.setHeader('Content-Disposition', 'attachment; filename=' + `${name}.${type}`);
                 res.setHeader('Content-Transfer-Encoding', 'binary');
                 res.setHeader('Content-Type', 'application/octet-stream')
                 
+                // send back response
                 res.send(file);
-                return;
-            } else {
-
-                // could not find this user
-                console.log("Could not find this user");
                 return;
             }
 
         });
     });
 
-    app.get('/user', function(req, res) {
-        console.log(req.body);
-        User.findOne({ 'email' :  "borisblokland@gmail.com" }, function(err, user) {
-            res.send(user);
+    app.post('/remove/:email', function(req, res) {
+        let email = req.params.email;
+        User.findOneAndUpdate({ 'email' :  email }, { $set: { testRuns: [] }}, {new: true}, (err, user) => {
+            var sseConnection = sseClients.getConnection(email);
+            sseConnection.send(user.stripBinary());
         });
         
     });
@@ -196,13 +164,13 @@ module.exports = function(app, passport, multer, sseMW, session) {
     app.post('/fileupload', upload.single('file'), function(req, res) {
         sess = req.session;
         console.log("user @ fileupload: " + sess.user);
-        let user_email = sess.email;
+        let email = sess.email;
 
-        user_email = "borisblokland@gmail.com";
+        email = "borisblokland@gmail.com";
 
         res.send('File uploaded!<br>');
 
-        var sseConnection = sseClients.getConnection(user_email);
+        var sseConnection = sseClients.getConnection(email);
         
         let filepath = '';
         if(req.file) // check if file is given
@@ -221,17 +189,8 @@ module.exports = function(app, passport, multer, sseMW, session) {
             var filename = ["OutOfBox_MSP430FR5969", "txt"];
         }
         
-
         console.log(`Constructed path: ${filepath}`);
-
-        User.findOne({ 'email' :  user_email }, function(err, user) {
-            // if there are any errors, return the error
-            if (err) {
-                console.log("got error: " + err);
-                throw err;
-                return;
-            }
-
+        User.findOne({ 'email' :  email }, function(err, user) {
             // check to see if theres already a user with that email
             if (user) {
                 console.log("Feel free to update this user");
@@ -260,8 +219,9 @@ module.exports = function(app, passport, multer, sseMW, session) {
                     }
                 );
 
-                sseConnection.send(user);
-                py.start_python(sseConnection, filepath, user.testRuns[index]._id);
+                sseConnection.send(user.stripBinary());
+
+                py.start_python(sseConnection, filepath, user.testRuns[index]._id, email);
                 
 
             } else {
