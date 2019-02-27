@@ -20,7 +20,7 @@ function start_python(sseConnection, path, id, email) {
 	}
 
 	console.log("Starting python");
-	let pyProcess = spawn(python_path, ["./python/program.py", path, `${time}`, `${id}`]);
+	let pyProcess = spawn(python_path, ["./python/program.py", "--binary", path, "--time", `${time}`, "--id", `${id}`]);
 
 	pyProcess.on('data', function(data) {
 	  	console.log(data);
@@ -36,7 +36,7 @@ function start_python(sseConnection, path, id, email) {
 	  	User.findOne({ 'email' :  email }, function(err, user) {
 	  		if (user)
 	  		{
-	  			sseConnection.send(user);
+	  			sseConnection.send(user.stripBinary());
 	  		}
 	  	});
 	});

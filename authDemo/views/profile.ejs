@@ -13,21 +13,47 @@
   
   <script>
     // this functions builds the testrun table
-    function buildTableRows(user)
+    function buildTableRows(array)
     {
       let markup = '';
       markup += "<tbody>";
-      user.testRuns.reverse().forEach(function(testrun, i){
+      array.reverse().forEach(function(row, i){
         // because array is reverserd, indexes should be in reverse order aswell
-        let index = user.testRuns.length - 1 - i; 
+        let index = array.length - 1 - i; 
+        let serial = "<td></td>";
+        let trace = "<td></td>";
+        let firmware = "<td></td>";
+        let status = "<td></td>";
+        if (row.serial)
+        {
+          serial = `<td><a href="/download/serial/${index}">
+            ${row.serial.filename}.${row.serial.filetype}
+          </a></td>`;
+        }
+        if (row.trace)
+        {
+          trace = `<td><a href="/download/trace/${index}">
+            ${row.trace.filename}.${row.trace.filetype}
+          </a></td>`;
+        }
+        if (row.firmware)
+        {
+          firmware = `<td><a href="/download/firmware/${index}">
+            ${row.firmware.filename}.${row.firmware.filetype}
+          </a></td>`;
+        }
+        if (row.status)
+        {
+          status = `<td>${row.status}</td>`;
+        }
         markup += `
         <tr> 
-          <td>${testrun._id}</td>         
-          <td>${testrun.date}</td>
-          <td><a href="/download/${index}">
-            ${testrun.firmware.filename}.${testrun.firmware.filetype}
-          </a></td>
-          <td>${testrun.status}</td>
+          <td>${row._id}</td>         
+          <td>${row.date}</td>
+          ${firmware}
+          ${serial}
+          ${trace}
+          ${status}
         </tr> 
         `;
       });
@@ -36,11 +62,18 @@
     }
 
     $(document).ready(function(){
-      $("#remove").click(function(){
+      $("#removetestruns").click(function(){
         // var result = confirm("Are you sure you want to delete all testruns?");
         // if (result) {
           // request removing all testruns
-          $.post("/remove/<%= email %>", function(data, status){});
+          $.post("/remove/testRuns/<%= email %>", function(data, status){});
+        // }        
+      });
+      $("#removefirmwares").click(function(){
+        // var result = confirm("Are you sure you want to delete all testruns?");
+        // if (result) {
+          // request removing all testruns
+          $.post("/remove/firmwares/<%= email %>", function(data, status){});
         // }        
       });
     });
@@ -48,8 +81,10 @@
     var update_table = null; // variable as placeholder for jquery function
     $(function() { 
       function my_fun(user){ // jquery function to update table
-        let result = buildTableRows(user);
-        $("table tbody").replaceWith(result);
+        let testruns = buildTableRows(user.testRuns);
+        let firmwares = buildTableRows(user.firmwares)
+        $("#testruntable tbody").replaceWith(testruns);
+        $("#firmwaretable tbody").replaceWith(firmwares);
       }  
       update_table = my_fun; // store function in variable to access it from js
     }) 
@@ -57,15 +92,23 @@
     // assume that API service is published on same server that is the server of this HTML file
     var source = new EventSource("../updates");
     source.onmessage = function(event) {
+      var terminal = document.getElementById("terminal");
       var data = JSON.parse(event.data); // parse data received
-      var inputCell= document.getElementById("console");
+      
       if(data["_id"]) // if data is passed, update table
       {
         update_table(data);
       }
       else // else just output what we received
       {
-        inputCell.innerHTML = inputCell.innerHTML + data;
+        // Here append the terminal with new data and handle automatic scrolling
+        var isScrolledToBottom = terminal.scrollHeight - terminal.clientHeight <= terminal.scrollTop + 1;
+        var newElement = document.createElement("div");
+        newElement.innerHTML = data;
+        terminal.appendChild(newElement);
+        // scroll to bottom if isScrolledToBotto
+        if(isScrolledToBottom)
+          terminal.scrollTop = terminal.scrollHeight - terminal.clientHeight;
       }
     };
   </script>
@@ -75,21 +118,44 @@
 <div class="container">
   <div class="page-header text-center">
     <h1><span class="fa fa-microchip"></span> Batteryless IoT Testbed</h1>
+    <strong>email</strong>: <%= email %><br>
     <a href="/logout" class="btn btn-default btn-sm">Logout</a>
   </div>
 
   <div class="row">
     <div class="col-md-6">
-      <!-- USER INFORMATION -->
+      <!-- FIRMWARE -->
       <div class="well">
-        <h3><span class="fa fa-user"></span> User</h3>
-          <p>
-            <strong>email</strong>: <%= email %><br>
-          </p>
+        <form action="/upload/firmware" method="post" enctype="multipart/form-data" target="formtarget">
+          <h3>Upload new firmware</h3>
+          <div class="form-group">
+            <label>Firmware</label>
+            <input type="file" class="form-control" name="file">
+          </div>
+          <button type="submit" class="btn btn-warning btn-lg">Submit</button>
+          <button type="button" id="removefirmwares"  class="btn btn-danger btn-lg">Remove all firmwares</button>
+        </form>
+
+        <div class="table-wrapper-scroll-y">
+          <table class="table table-striped" id="firmwaretable">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Firmware</th>
+              </tr>    
+            </thead>  
+              <script>
+                document.write(buildTableRows(<%- user %>.firmwares));
+              </script>
+          </table>
+        </div>
+
       </div>
-      <!-- UPLOAD FORM -->
+
+      <!-- UPLOAD TESTRUN -->
       <div class="well">
-        <form action="/fileupload" method="post" enctype="multipart/form-data" target="formtarget">
+        <form action="/upload/testrun" method="post" enctype="multipart/form-data" target="formtarget">
           <div class="form-group">
             <label>Test run argument</label>
             <input type="text" class="form-control" name="argument">
@@ -105,10 +171,9 @@
 
     <!-- TERMINAL -->
     <div class="col-md-6">
-      <div class="terminal-wrapper-scroll-y">
-        <div id="console"class="well">
-          <h3>Terminal</h3>
-        </div>
+      <div class="well">
+        <h3>Terminal</h3>
+        <div id="terminal" style="overflow:auto"></div>
       </div>
     </div>
   </div>
@@ -125,7 +190,7 @@
           </div>
           <div class="col-md-6">
             <span class="pull-right">
-              <button id="remove" class="btn btn-danger btn-lg">Remove all</button>
+              <button id="removetestruns" class="btn btn-danger btn-lg">Remove all testruns</button>
             </span>
           </div>
         </div>
@@ -137,12 +202,13 @@
                 <th>Id</th>
                 <th>Date</th>
                 <th>Firmware</th>
+                <th>Serial output</th>
+                <th>GPIO trace</th>
                 <th>Status</th>               
               </tr>    
             </thead>  
               <script>
-                let user = <%- user %>;
-                document.write(buildTableRows(user));
+                document.write(buildTableRows(<%- user %>.testRuns));
               </script>
           </table>
         </div>

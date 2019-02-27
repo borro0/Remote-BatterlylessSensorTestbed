@@ -9,21 +9,14 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
     // session variable in which session specific information is stored
     var sess; 
-
     // sse clients, Realtime updates
     var sseClients = new sseMW.Topic();
 
-    // =====================================
-    // HOME PAGE (with login links) ========
-    // =====================================
     app.get('/', function(req, res) {
         sess = req.session;
         res.render('index.ejs'); // load the index.ejs file
     });
 
-    // =====================================
-    // LOGIN ===============================
-    // =====================================
     // show the login form
     app.get('/login', function(req, res) {
 
@@ -38,9 +31,6 @@ module.exports = function(app, passport, multer, sseMW, session) {
         failureFlash : true // allow flash messages
     }));
 
-    // =====================================
-    // SIGNUP ==============================
-    // =====================================
     // show the signup form
     app.get('/signup', function(req, res) {
         // render the page and pass in any flash data if it exists
@@ -54,13 +44,9 @@ module.exports = function(app, passport, multer, sseMW, session) {
         failureFlash : true // allow flash messages
     }));
 
-    // =====================================
-    // SERVER SIGNAL EVENTS ================
-    // =====================================
-
+    // Handle the server sent events (SSE)
     app.get('/updates', function (req, res) {
         sess = req.session;
-
         console.log("res (should have sseConnection)= " + res.sseConnection);
         var sseConnection = res.sseConnection;
         console.log("sseConnection= ");
@@ -70,9 +56,6 @@ module.exports = function(app, passport, multer, sseMW, session) {
         sseConnection.send("Hello!\r\n");
     });
 
-    // =====================================
-    // PROFILE SECTION =====================
-    // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', function(req, res) {
@@ -81,7 +64,6 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
         // sess.email = req.user.email;
         sess.email = "borisblokland@gmail.com";
-        // =====================================================================
 
         User.findOne({ 'email' :  sess.email }, function(err, user) {
             // check to see if theres already a user with that email
@@ -98,14 +80,8 @@ module.exports = function(app, passport, multer, sseMW, session) {
                 console.log("Could not find this user");
                 return;
             }
-
         });
     });
-
-    // =====================================
-    // FILE UPLOAD =========================
-    // =====================================
-    // Here we handle file uploading
 
     var storage = multer.diskStorage({
         destination: (req, file, cb) => {
@@ -129,15 +105,16 @@ module.exports = function(app, passport, multer, sseMW, session) {
         });
     });
 
-    app.get('/download/:index', function(req, res){
+    app.get('/download/:filesort/:index', function(req, res){
         let index = req.params.index;
+        let filesort = req.params.filesort;
         User.findOne({ 'email' :  "borisblokland@gmail.com" }, function(err, user) {
             // check to see if theres already a user with that email
             if (user) {
                 // create variables for response
-                let name = user.testRuns[index].firmware.filename;
-                let type = user.testRuns[index].firmware.filetype;
-                let file = user.testRuns[index].firmware.data
+                let name = user.testRuns[index][filesort].filename;
+                let type = user.testRuns[index][filesort].filetype;
+                let file = user.testRuns[index][filesort].data
 
                 // set headers for downloading
                 res.setHeader('Content-Disposition', 'attachment; filename=' + `${name}.${type}`);
@@ -152,21 +129,25 @@ module.exports = function(app, passport, multer, sseMW, session) {
         });
     });
 
-    app.post('/remove/:email', function(req, res) {
+    app.post('/remove/:removefile/:email', function(req, res) {
         let email = req.params.email;
-        User.findOneAndUpdate({ 'email' :  email }, { $set: { testRuns: [] }}, {new: true}, (err, user) => {
+        let removefile = req.params.removefile; 
+        let query = {}
+        query[removefile] = []
+        User.findOneAndUpdate({ 'email' :  email }, { $set: query}, {new: true}, (err, user) => {
             var sseConnection = sseClients.getConnection(email);
             sseConnection.send(user.stripBinary());
+            sseConnection.send(`Removed all ${removefile}\r\n`)
         });
         
     });
 
-    app.post('/fileupload', upload.single('file'), function(req, res) {
+    app.post('/upload/:uploadfile', upload.single('file'), function(req, res) {
         sess = req.session;
-        console.log("user @ fileupload: " + sess.user);
         let email = sess.email;
+        // email = "borisblokland@gmail.com";
 
-        email = "borisblokland@gmail.com";
+        let uploadfile = req.params.uploadfile;
 
         res.send('File uploaded!<br>');
 
@@ -189,24 +170,21 @@ module.exports = function(app, passport, multer, sseMW, session) {
             var filename = ["OutOfBox_MSP430FR5969", "txt"];
         }
         
-        console.log(`Constructed path: ${filepath}`);
-        User.findOne({ 'email' :  email }, function(err, user) {
-            // check to see if theres already a user with that email
-            if (user) {
-                console.log("Feel free to update this user");
+        User.findOne({ 'email' :  email }, function(err, user) 
+        {
+            var newDate = new Date();
+            var options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+            newDate = newDate.toLocaleDateString('nl-NL', options);
 
-                let newDate = new Date(); // get current date
-                // newDate.setTime( newDate.getTime() + 1 * 60 * 60 * 1000 );
-                newDate.toISOString().slice(0,24);
-                let file = fs.readFileSync(filepath); // read uploaded file from filesystem
-                
-                // get the filename and filetype
-                let filetype = filename.pop();
-                filename = filename.join();
-                console.log(`Filename: ${filename}.${filetype}`);
-                console.log(filetype);
+            let file = fs.readFileSync(filepath); // read uploaded file from filesystem
+            
+            // get the filename and filetype
+            let filetype = filename.pop();
+            filename = filename.join();
 
-                // upload
+            if (uploadfile === "testrun")
+            {
+                console.log("Uploading new testrun");
                 let index = user.addTestrun(
                     {
                         'date': newDate,
@@ -218,23 +196,31 @@ module.exports = function(app, passport, multer, sseMW, session) {
                         }
                     }
                 );
-
-                sseConnection.send(user.stripBinary());
-
                 py.start_python(sseConnection, filepath, user.testRuns[index]._id, email);
-                
-
-            } else {
-                // could not find this user
-                console.log("Could not find this user");
-                return;
             }
+            else if (uploadfile === "firmware")
+            {
+                console.log("Uploading new firmware");
+                let index = user.addFirmware(
+                    {
+                        'date': newDate,
+                        'firmware': {
+                            'data'      : file,
+                            'filename'  : filename,
+                            'filetype'  : filetype
+                        }
+                    }
+                );                
+            }
+            else
+            {
+                console.log(`Unsupported file upload ${uploadfile}`)
+            }
+
+            sseConnection.send(user.stripBinary());
         });
     });
 
-    // =====================================
-    // LOGOUT ==============================
-    // =====================================
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
