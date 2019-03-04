@@ -1,0 +1,8 @@
+Form options
+
+- Power Source
+    + Continious
+    + Switching
+        ++ frequency
+        ++ duty cycle
+- Time

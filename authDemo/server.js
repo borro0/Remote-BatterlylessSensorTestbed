@@ -14,7 +14,7 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
-var reload = require('reload')
+var reload = require('reload');
 
 var configDB = require('./config/database.js');
 
@@ -44,7 +44,6 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 
-
 })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
@@ -56,11 +55,9 @@ require('./app/routes.js')(app, passport, multer, sseMW, session); // load our r
 
 // Reload code here
 console.log("reloading app")
-reload(app);
+// reload(app);
 
 // launch ======================================================================
 app.listen(port);
-
-
 
 console.log('The magic happens on port ' + port);

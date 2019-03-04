@@ -1,6 +1,7 @@
 // load the things we need
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
+var ObjectId = mongoose.Schema.Types.ObjectId;
 
 // define schema for files
 var fileSchema = mongoose.Schema({
@@ -14,6 +15,24 @@ var firmwareSchema = mongoose.Schema({
     date        : String,
     firmware    : fileSchema
 });
+
+// define schema for testRunSettings
+// var testRunSettingsSchema = mongoose.Schema({
+//     firmware    : ObjectId,
+//     powersource : {
+//         name    : String,
+//         options : {
+            
+//         }
+//     }
+
+//     - Power Source
+//         + Continious
+//         + Switching
+//             ++ frequency
+//             ++ duty cycle
+//     - Time
+// })
 
 // define schema for testRuns
 var testRunSchema = mongoose.Schema({

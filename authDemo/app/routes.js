@@ -4,6 +4,7 @@ var mongoose   = require('mongoose');
 var Gridfs     = require('gridfs-stream');
 var py         = require('./python');
 var fs         = require('fs');
+var reload     = require('reload');
 
 module.exports = function(app, passport, multer, sseMW, session) {
 
@@ -85,10 +86,10 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
     var storage = multer.diskStorage({
         destination: (req, file, cb) => {
-          cb(null, './uploads')
+             cb(null, './uploads')
         },
         filename: (req, file, cb) => {
-         cb(null, file.originalname)
+            cb(null, file.originalname)
         }
     });
     var upload = multer({storage: storage});
@@ -105,27 +106,24 @@ module.exports = function(app, passport, multer, sseMW, session) {
         });
     });
 
-    app.get('/download/:filesort/:index', function(req, res){
+    app.get('/download/:array/:filesort/:index', function(req, res){
         let index = req.params.index;
         let filesort = req.params.filesort;
+        let array = req.params.array;
         User.findOne({ 'email' :  "borisblokland@gmail.com" }, function(err, user) {
-            // check to see if theres already a user with that email
-            if (user) {
-                // create variables for response
-                let name = user.testRuns[index][filesort].filename;
-                let type = user.testRuns[index][filesort].filetype;
-                let file = user.testRuns[index][filesort].data
+            // create variables for response
+            let name = user[array][index][filesort].filename;
+            let type = user[array][index][filesort].filetype;
+            let file = user[array][index][filesort].data
 
-                // set headers for downloading
-                res.setHeader('Content-Disposition', 'attachment; filename=' + `${name}.${type}`);
-                res.setHeader('Content-Transfer-Encoding', 'binary');
-                res.setHeader('Content-Type', 'application/octet-stream')
-                
-                // send back response
-                res.send(file);
-                return;
-            }
-
+            // set headers for downloading
+            res.setHeader('Content-Disposition', 'attachment; filename=' + `${name}.${type}`);
+            res.setHeader('Content-Transfer-Encoding', 'binary');
+            res.setHeader('Content-Type', 'application/octet-stream')
+            
+            // send back response
+            res.send(file);
+            return;
         });
     });
 
@@ -142,16 +140,23 @@ module.exports = function(app, passport, multer, sseMW, session) {
         
     });
 
-    app.post('/upload/:uploadfile', upload.single('file'), function(req, res) {
+    app.post('/upload/:uploadfile', upload.single('filename'), function(req, res) {
         sess = req.session;
         let email = sess.email;
-        // email = "borisblokland@gmail.com";
+
+        // check if session is still active, else force refresh
+        if (email == null)
+        {
+            console.log("Email is unset, reload app")
+            reload(app);
+            return;
+        }
 
         let uploadfile = req.params.uploadfile;
-
         res.send('File uploaded!<br>');
-
         var sseConnection = sseClients.getConnection(email);
+
+        console.log("sse " + sseConnection)
         
         let filepath = '';
         if(req.file) // check if file is given
@@ -184,7 +189,8 @@ module.exports = function(app, passport, multer, sseMW, session) {
 
             if (uploadfile === "testrun")
             {
-                console.log("Uploading new testrun");
+                sseConnection.send("Uploading new testrun");
+
                 let index = user.addTestrun(
                     {
                         'date': newDate,
@@ -200,7 +206,7 @@ module.exports = function(app, passport, multer, sseMW, session) {
             }
             else if (uploadfile === "firmware")
             {
-                console.log("Uploading new firmware");
+                sseConnection.send("Uploading new firmware");
                 let index = user.addFirmware(
                     {
                         'date': newDate,

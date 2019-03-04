@@ -2,64 +2,16 @@
 <html>
 <head>
   <title>Node Authentication</title>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <style>
-      body        { word-wrap:break-word; }
-  </style>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/css/style.css" type="text/css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="/reload/reload.js"></script>
+  <script type="text/javascript" src="/js-helpers/build-html.js"></script>
   
   <script>
-    // this functions builds the testrun table
-    function buildTableRows(array)
-    {
-      let markup = '';
-      markup += "<tbody>";
-      array.reverse().forEach(function(row, i){
-        // because array is reverserd, indexes should be in reverse order aswell
-        let index = array.length - 1 - i; 
-        let serial = "<td></td>";
-        let trace = "<td></td>";
-        let firmware = "<td></td>";
-        let status = "<td></td>";
-        if (row.serial)
-        {
-          serial = `<td><a href="/download/serial/${index}">
-            ${row.serial.filename}.${row.serial.filetype}
-          </a></td>`;
-        }
-        if (row.trace)
-        {
-          trace = `<td><a href="/download/trace/${index}">
-            ${row.trace.filename}.${row.trace.filetype}
-          </a></td>`;
-        }
-        if (row.firmware)
-        {
-          firmware = `<td><a href="/download/firmware/${index}">
-            ${row.firmware.filename}.${row.firmware.filetype}
-          </a></td>`;
-        }
-        if (row.status)
-        {
-          status = `<td>${row.status}</td>`;
-        }
-        markup += `
-        <tr> 
-          <td>${row._id}</td>         
-          <td>${row.date}</td>
-          ${firmware}
-          ${serial}
-          ${trace}
-          ${status}
-        </tr> 
-        `;
-      });
-      markup += "</tbody>";
-      return markup;
-    }
 
     $(document).ready(function(){
       $("#removetestruns").click(function(){
@@ -82,9 +34,11 @@
     $(function() { 
       function my_fun(user){ // jquery function to update table
         let testruns = buildTableRows(user.testRuns);
-        let firmwares = buildTableRows(user.firmwares)
+        let firmwares = buildTableRows(user.firmwares);
+        let firmwareoptions = buildFirmwareOptions(user.firmwares);
         $("#testruntable tbody").replaceWith(testruns);
         $("#firmwaretable tbody").replaceWith(firmwares);
+        $("#firmwareoptions").empty().append(firmwareoptions);
       }  
       update_table = my_fun; // store function in variable to access it from js
     }) 
@@ -119,59 +73,148 @@
   <div class="page-header text-center">
     <h1><span class="fa fa-microchip"></span> Batteryless IoT Testbed</h1>
     <strong>email</strong>: <%= email %><br>
-    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    <a href="/logout" class="btn btn-light">Logout</a>
+    <hr/>
   </div>
 
   <div class="row">
     <div class="col-md-6">
+
       <!-- FIRMWARE -->
-      <div class="well">
-        <form action="/upload/firmware" method="post" enctype="multipart/form-data" target="formtarget">
-          <h3>Upload new firmware</h3>
-          <div class="form-group">
-            <label>Firmware</label>
-            <input type="file" class="form-control" name="file">
-          </div>
-          <button type="submit" class="btn btn-warning btn-lg">Submit</button>
-          <button type="button" id="removefirmwares"  class="btn btn-danger btn-lg">Remove all firmwares</button>
-        </form>
-
-        <div class="table-wrapper-scroll-y">
-          <table class="table table-striped" id="firmwaretable">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Date</th>
-                <th>Firmware</th>
-              </tr>    
-            </thead>  
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Upload new firmware</h3>
+          <form class="card-text"action="/upload/firmware" method="post" enctype="multipart/form-data" target="formtarget">
+            <div class="form-group">
+              <label>Firmware</label>
+              <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="filename">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+              </div>
               <script>
-                document.write(buildTableRows(<%- user %>.firmwares));
+                // Script for updating filename
+                $("input[type=file]").on('change',function(){
+                  //get the file name
+                  var fileName = $(this).val().split('\\').pop();
+                  //replace the "Choose a file" label
+                  $(this).next('.custom-file-label').html(fileName);
+                })
               </script>
-          </table>
+            </div>
+            <button type="submit" class="btn btn-warning btn-lg">Submit</button>
+            <button type="button" id="removefirmwares"  class="btn btn-danger btn-lg">Remove all firmwares</button>
+          </form>
         </div>
+      </div>
 
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Firmwares</h3>
+          <div class="card-text">
+            <div class="table-wrapper-scroll-y">
+              <table class="table table-striped" id="firmwaretable">
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>Firmware</th>
+                  </tr>    
+                </thead>  
+                  <script>
+                    document.write(buildTableRows(<%- user %>.firmwares));
+                  </script>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- UPLOAD TESTRUN -->
-      <div class="well">
-        <form action="/upload/testrun" method="post" enctype="multipart/form-data" target="formtarget">
-          <div class="form-group">
-            <label>Test run argument</label>
-            <input type="text" class="form-control" name="argument">
+      <div class="card">
+        <div class="card card-body bg-light">
+
+          <!-- TAB NAVIGATION -->
+          <h3 class="card-title">Start new testrun</h3>
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="form-tab" data-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="true">Form input</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="json-tab" data-toggle="tab" href="#json" role="tab" aria-controls="json" aria-selected="false">JSON input</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+
+            <!-- FORM TAB -->
+            <div class="tab-pane fade show active" id="form" role="tabpanel" aria-labelledby="form-tab">
+              <form action="/upload/testrun" method="post" enctype="multipart/form-data" target="formtarget">
+                <div class="form-group">
+                  <label for="firmwareoptions">Firmware</label>
+                  <select name="firmwareselect" class="custom-select mb-3" id="firmwareoptions">
+                    <script>
+                      document.write(buildFirmwareOptions(<%- user %>.firmwares))
+                    </script>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="poweroptions">Power source</label>
+                  <select name="powerselect" class="custom-select mb-3" id="poweroptions">
+                    <option selected>Choose a power source</option>
+                    <option value="continuous">Continuous power</option>
+                    <option value="switching">Switching power</option>
+                  </select>
+                  <script>
+                    $("#poweroptions").on("change", function() {
+                      // If switching power is selected, show corresponding forms
+                      if ($(this).val() === "switching")
+                      {
+                        $("#switching-options").show();
+                      }
+                      else
+                      {
+                        $("#switching-options").hide();
+                      }
+                    })
+                  </script>
+                </div>
+                <div formGroupName="switching-options" id="switching-options" style="display:none">
+                  <div class="form-group">
+                    <label for="frequency">Frequency (Hz)</label>
+                    <input type="number" class="form-control" id="frequency" placeholder="10">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="duty-cycle">Duty Cycle (%)</label>
+                    <input type="number" class="form-control" id="duty-cycle" placeholder="50">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="time">Time (seconds)</label>
+                  <input type="number" class="form-control" id="time" placeholder="10">
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg">Submit</button>
+              </form>
+            </div>
+
+            <!-- JSON TAB -->
+            <div class="tab-pane fade" id="json" role="tabpanel" aria-labelledby="json-tab">
+              <form action="/upload/testrun" method="post" enctype="multipart/form-data" target="formtarget">
+                <div class="custom-file mb-3">
+                  <input type="file" class="custom-file-input" id="jsonfile" name="jsonfile">
+                  <label class="custom-file-label" for="jsonfile">Choose file</label>
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg">Submit</button>
+              </form>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Binary</label>
-            <input type="file" class="form-control" name="file">
-          </div>
-          <button type="submit" class="btn btn-warning btn-lg">Submit</button>
-        </form>
+        </div>
       </div>
     </div>
 
     <!-- TERMINAL -->
     <div class="col-md-6">
-      <div class="well">
+      <div class="card card-body bg-light">
         <h3>Terminal</h3>
         <div id="terminal" style="overflow:auto"></div>
       </div>
@@ -181,9 +224,10 @@
   <iframe name="formtarget"style="display:none"></iframe>
 
   <div class="row">
+
     <!-- TESTRUNS -->
     <div class="col-md-12">
-      <div class="well">
+      <div class="card card-body bg-light">
         <div class="row">
           <div class="col-md-6">
             <h3><span class="fa fa-wrench"></span> Testruns </h3>
