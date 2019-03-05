@@ -1,4 +1,5 @@
 import threading
+import subprocess
 
 class LogicAnalyzerThread (threading.Thread):
 	def __init__(self, time, hardware, platform, output_path):

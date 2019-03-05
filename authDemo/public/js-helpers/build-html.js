@@ -11,13 +11,13 @@ function buildTableRows(array)
     let status = "<td></td>";
     if (row.serial)
     {
-      serial = `<td><a href="/download/testruns/serial/${i}">
+      serial = `<td><a href="/download/testRuns/serial/${i}">
         ${row.serial.filename}.${row.serial.filetype}
       </a></td>`;
     }
     if (row.trace)
     {
-      trace = `<td><a href="/download/testruns/trace/${i}">
+      trace = `<td><a href="/download/testRuns/trace/${i}">
         ${row.trace.filename}.${row.trace.filetype}
       </a></td>`;
     }

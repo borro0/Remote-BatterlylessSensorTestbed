@@ -171,8 +171,9 @@ module.exports = function(app, passport, multer, sseMW, session) {
         }
         else // no file is given, use default
         {
-            filepath = './python/OutOfBox_MSP430FR5969.txt';
-            var filename = ["OutOfBox_MSP430FR5969", "txt"];
+            filepath = './python/OutOfBox_MSP430FR5969_print_hello.txt';
+            filepath_python = './OutOfBox_MSP430FR5969_print_hello.txt'
+            var filename = ["OutOfBox_MSP430FR5969_print_hello", "txt"];
         }
         
         User.findOne({ 'email' :  email }, function(err, user) 

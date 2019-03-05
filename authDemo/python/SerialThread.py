@@ -6,6 +6,7 @@ import os
 class SerialThread (threading.Thread):
 	def __init__(self, stop, platform, hardware, time, testrun_id, output_path):
 		threading.Thread.__init__(self)
+		self.stop = stop
 		self.platform = platform
 		self.hardware = hardware
 		self.time = time
@@ -15,9 +16,6 @@ class SerialThread (threading.Thread):
 	def run(self):
 		buff = f"Running test {self.testrun_id} for {self.time} seconds"
 		if not self.hardware:
-			# print(f"Going to sleep for {self.time} seconds.")
-			# time.sleep(self.time)
-
 			self.write_file(buff)
 		else:
 			if self.platform == "Windows":
@@ -29,6 +27,7 @@ class SerialThread (threading.Thread):
 					while not self.stop(): # this checks if we should stop or not
 						line = ser.readline() # read a '\n' terminated line
 						if len(line) is not 0: # only print if something was recorded
+							line = line.decode("utf-8") # decode bytes into string
 							print(line)
 							buff += line
 					self.write_file(buff)
@@ -37,3 +36,5 @@ class SerialThread (threading.Thread):
 		with open(f"{self.output_path}", "w") as f:
 			print(f"Writing serial output to {self.output_path}")
 			f.write(buff)
+
+	

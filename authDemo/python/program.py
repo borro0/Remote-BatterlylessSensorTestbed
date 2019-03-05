@@ -17,12 +17,15 @@ parser.add_argument('--binary', default="/home/borro0/Remote-BatterlylessSensorT
                     help='binary used for flashing the device')
 parser.add_argument('--time', type=int, default=3, help='amount of time test should run in seconds')
 parser.add_argument('--id', default="5c713d5c8691cb303cdbd56c", help='id of testrun')
+parser.add_argument("--hardware", action="store_true", help="pass this option to ensure the testbed will use real hardware isntead of emulation")
+
 
 args = parser.parse_args()
 
 binary = args.binary
 time = args.time
 testrun_id = args.id
+hardware = args.hardware
 
 # Setup paths to store output files
 tmp_folder = "tmp"
@@ -31,6 +34,9 @@ serial_output_path = f"{output_folder}/serial_output.txt"
 trace_output_path = f"{output_folder}/trace.sr"
 
 print(f"Testrun id: {testrun_id}")
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print(binary)
+print(dir_path)
 platform = platform.system(); # detect on what operating system we are running
 
 if hardware:
@@ -42,7 +48,8 @@ if hardware:
 	else:
 		flasher = "MSP430Flasher"
 
-	subprocess.run([flasher, "-w", binary, "-z", "[RESET]"]) # Flash and reset MCU
+	print(binary)
+	subprocess.run([flasher, "-w", binary, "-z", "[VCC,RESET]"]) # Flash and reset MCU
 
 # Create output directory for 
 try:
@@ -75,15 +82,19 @@ collection = db.users
 testrun_id = testrun_id.replace('"', '')
 
 # Query to set status to done
-with open(serial_output_path) as f:
+with open(serial_output_path) as serial_file, open(trace_output_path, "rb") as trace_file:
 	myquery = {"testRuns._id" : ObjectId(testrun_id)}
-	file = f.read()
+	serial_file_read = serial_file.read()
+	trace_file_read = trace_file.read()
 	newvalues = { "$set": 
 		{ 	
 			"testRuns.$.status": "done", 
-			"testRuns.$.serial.data": file,
+			"testRuns.$.serial.data": serial_file_read,
 			"testRuns.$.serial.filename": "serial",
-			"testRuns.$.serial.filetype": "txt"
+			"testRuns.$.serial.filetype": "txt",
+			"testRuns.$.trace.data": trace_file_read,
+			"testRuns.$.trace.filename": "trace",
+			"testRuns.$.trace.filetype": "sr"
 		}
 	}	
 	collection.update_one(myquery, newvalues)

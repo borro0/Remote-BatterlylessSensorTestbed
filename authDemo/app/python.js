@@ -20,7 +20,8 @@ function start_python(sseConnection, path, id, email) {
 	}
 
 	console.log("Starting python");
-	let pyProcess = spawn(python_path, ["./python/program.py", "--binary", path, "--time", `${time}`, "--id", `${id}`]);
+	console.log(path)
+	let pyProcess = spawn(python_path, ["./python/program.py", "--binary", path, "--time", `${time}`, "--id", `${id}`, "--hardware"]);
 
 	pyProcess.on('data', function(data) {
 	  	console.log(data);
