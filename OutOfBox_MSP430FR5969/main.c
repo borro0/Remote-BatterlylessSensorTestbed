@@ -125,7 +125,7 @@ int main(void) {
 
     //mode = TRANSMIT_DATA_MODE; // set mode to send uart stuff
 
-    uint8_t string[6] = "hello\n";
+    uint8_t string[6] = "world\n";
 
     while (1)
     {

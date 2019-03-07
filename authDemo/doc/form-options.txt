@@ -6,3 +6,8 @@ Form options
         ++ frequency
         ++ duty cycle
 - Time
+- Trace output format
+	+ ascii
+	+ csv
+	+ js
+

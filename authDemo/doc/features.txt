@@ -1,1 +1,23 @@
 Features
+
+Done (or almost done):
+- upload firmware sperately
+- eclipse (code composer studio) plugin
+- responsive website
+- terminal
+- 
+
+To (may) be done:
+
+- add Ekho
+- add Flicker
+- schedule tests
+- rerun tests option
+- output memory dump
+
+- graph logic analyzer trace
+- terminal -> output
+- let users add their own testbed at home/university
+- emulate sensor input
+- monitor energy usage (per peripheral)
+- timestamp uart
