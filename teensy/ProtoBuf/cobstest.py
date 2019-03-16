@@ -2,43 +2,56 @@ from cobs import cobs
 import serial
 import binascii
 import simple_pb2
+import threading
+from TeensySerial import TeensySerial
 
 def parse_input(input):
-    
-
+    # Create mesage object
     simple_received = simple_pb2.SimpleMessage()    
+
+    # Parse message object
     simple_received.ParseFromString(input)
-    print(simple_received.lucky_number2)
 
+    # Print fields
+    print(f"Frequency = {simple_received.frequency}, duty_cycle = {simple_received.duty_cycle}")
 
+# Create message object
 simple = simple_pb2.SimpleMessage()
 
-simple.lucky_number = 1;
-simple.lucky_number2 = 3;
+# Set message object fields
+simple.frequency = 10;
+simple.duty_cycle = 50;
 
+# Serialize message object
 byte_string = simple.SerializeToString()
 
-# byte_string = bytearray(b'Hello world This is a test\n')
-# byte_string =  bytearray(b'\n\x91\x8c')
-
-print(binascii.hexlify(byte_string))
-
+# COBS encode packet
 encoded = cobs.encode(byte_string)
-print(binascii.hexlify(encoded))
-encoded += b'\x00' # add delimiter
-print(binascii.hexlify(encoded))
-# decoded = cobs.decode(encoded)
-# print(decoded)
 
+# Add packet delimiter
+encoded += b'\x00'
+
+# Open serial port
 with serial.Serial('COM3', 115200, timeout=1) as ser: 
-    print(ser.name)
+    # Print serial port name
+    print(f"Opened {ser.name}")
+
+    # Write our packet
     ser.write(encoded)
-    input = ser.read(100) # read 3 bytes
-    if len(input) is not 0: # only handle non zero input
-        print(binascii.hexlify(input))
+
+    # Read the console
+    input = ser.read(100)
+
+    # Check if read is non-zero    
+    if len(input) is not 0:
+
+        # Remove last byte (which is delimiter)
         input = input[:-1]
+
+        # COBS decode packet
         input = cobs.decode(input)
-        print(binascii.hexlify(input))
+
+        # Parse the input message
         parse_input(input)
 
 

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0csimple.proto\"<\n\rSimpleMessage\x12\x14\n\x0clucky_number\x18\x01 \x02(\x05\x12\x15\n\rlucky_number2\x18\x02 \x02(\x05')
+  serialized_pb=_b('\n\x0csimple.proto\"6\n\rSimpleMessage\x12\x11\n\tfrequency\x18\x01 \x02(\x05\x12\x12\n\nduty_cycle\x18\x02 \x02(\x05')
 )
 
 
@@ -34,14 +34,14 @@ _SIMPLEMESSAGE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='lucky_number', full_name='SimpleMessage.lucky_number', index=0,
+      name='frequency', full_name='SimpleMessage.frequency', index=0,
       number=1, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='lucky_number2', full_name='SimpleMessage.lucky_number2', index=1,
+      name='duty_cycle', full_name='SimpleMessage.duty_cycle', index=1,
       number=2, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -60,7 +60,7 @@ _SIMPLEMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=16,
-  serialized_end=76,
+  serialized_end=70,
 )
 
 DESCRIPTOR.message_types_by_name['SimpleMessage'] = _SIMPLEMESSAGE
