@@ -37,7 +37,7 @@ print(f"Testrun id: {testrun_id}")
 dir_path = os.path.dirname(os.path.realpath(__file__))
 print(binary)
 print(dir_path)
-platform = platform.system(); # detect on what operating system we are running
+platform = platform.system() # detect on what operating system we are running
 
 if hardware:
 	# First we flash the MCU with the new firmware, ensure MCU is powered and debugger is connected

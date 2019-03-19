@@ -4,7 +4,13 @@
 #include "simple.pb.h"
 #include <PacketSerial.h>
 
-PacketSerial myPacketSerial;
+PacketSerial myPacketSerial; // used for packets sending/receiving
+IntervalTimer myTimer; // used as source for PWM
+const int pwmPin = 13;  // pin assigned to PWM
+
+// On and off time for PWM signal, defined is us
+volatile int pwm_on_time = 500000;
+volatile int pwm_off_time = 500000;
 
 void setup()
 {
@@ -13,19 +19,18 @@ void setup()
 
     myPacketSerial.begin(115200);
     myPacketSerial.setPacketHandler(&onPacketReceived);
-    
-    delay(1000);
+    myTimer.begin(handlePWM, pwm_on_time);
 
     digitalWrite(13, LOW);
-    
-    
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop() 
+{
+  // Handle serial packets
   myPacketSerial.update();
 }
 
+// This function is called when a new packet has been received
 void onPacketReceived(const uint8_t* buffer, size_t size)
 {
   uint8_t tempBuffer[size];
@@ -33,7 +38,7 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
   // Copy the packet into our temporary buffer.
   memcpy(tempBuffer, buffer, size);
 
-  /* Allocate space for the decoded message. */
+  // Allocate space for the decoded message
   SimpleMessage message = SimpleMessage_init_zero;
   
   /* Create a stream that reads from the buffer. */
@@ -42,8 +47,13 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
   /* Now we are ready to decode the message. */
   pb_decode(&istream, SimpleMessage_fields, &message);
 
-  message.frequency += 1;
-  message.duty_cycle += 1;
+  // update pwm
+  pwm_on_time = message.on_time;
+  pwm_off_time = message.off_time;
+
+  // Increment values as form of response
+  message.on_time += 1;
+  message.off_time += 1;
 
   /* Create a stream that will write to our buffer. */
   pb_ostream_t ostream = pb_ostream_from_buffer(tempBuffer, size);
@@ -53,4 +63,18 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
 
   // send packet
   myPacketSerial.send(tempBuffer, size);  
+}
+
+void handlePWM() {
+  static int pinState = LOW;
+  
+  if (pinState == LOW) {
+    pinState = HIGH;
+    myTimer.update(pwm_off_time); // this is off time
+  } else {
+    myTimer.update(pwm_on_time); // this is on time
+    pinState = LOW;
+  }
+  
+  digitalWrite(pwmPin, pinState);
 }

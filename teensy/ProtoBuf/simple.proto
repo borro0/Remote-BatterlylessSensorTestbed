@@ -4,7 +4,7 @@
 syntax = "proto2";
 
 message SimpleMessage {
-    required int32 frequency = 1;
-    required int32 duty_cycle = 2;
+    required int32 on_time = 1;
+    required int32 off_time = 2;
 }
 
