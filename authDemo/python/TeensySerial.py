@@ -3,7 +3,7 @@ import serial
 import time
 import os
 from queue import Queue
-import simple_pb2
+from simple_pb2 import SimpleMessage # contains message definition
 import platform
 from cobs import cobs
 import binascii
@@ -51,7 +51,7 @@ class TeensySerial (threading.Thread):
     def parse_input(self, input):
         input = input[:-1] # Remove last byte (which is delimiter)
         packet = cobs.decode(input) # COBS decode packet
-        message = simple_pb2.SimpleMessage() # Create mesage object
+        message = SimpleMessage() # Create mesage object
         message.ParseFromString(packet) # Parse message object
         if self.receive_callback:
             self.receive_callback(message)
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     thread.start()
 
     while True:
-        message = simple_pb2.SimpleMessage() # Create message object
+        message = SimpleMessage() # Create message object
 
         print("Hello, please enter desired frequency")
         frequency = float(input('--> '))

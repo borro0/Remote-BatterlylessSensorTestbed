@@ -4,6 +4,7 @@ import platform
 import threading
 from SerialThread import SerialThread
 from LogicAnalyzerThread import LogicAnalyzerThread
+from TeensySerial import TeensySerial
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import argparse
@@ -12,16 +13,15 @@ import shutil
 # If hardware is disabled, we bypass all logic related to hardware (serial input, logic analayser, flasher)
 hardware = False 
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='This script manages test runs.')
 parser.add_argument('--binary', default="/home/borro0/Remote-BatterlylessSensorTestbed/OutOfBox_MSP430FR5969/Debug/OutOfBox_MSP430FR5969.txt",
                     help='binary used for flashing the device')
 parser.add_argument('--time', type=int, default=3, help='amount of time test should run in seconds')
 parser.add_argument('--id', default="5c713d5c8691cb303cdbd56c", help='id of testrun')
 parser.add_argument("--hardware", action="store_true", help="pass this option to ensure the testbed will use real hardware isntead of emulation")
 
-
+# Storing command line arguments
 args = parser.parse_args()
-
 binary = args.binary
 time = args.time
 testrun_id = args.id
@@ -58,8 +58,12 @@ except FileExistsError:
     # directory already exists, should not occur
     pass
 
-# Variable used by serial thread to signal exit
+# Variable used by threads to signal exit
 stop_threads = False
+
+# Start serial thread with teensy to handle power source
+thread_teensy_serial = TeensySerial(lambda: stop_threads, None)
+thread_teensy_serial.start()
 
 # We now start the logic analyser
 thread_logic_analyzer = LogicAnalyzerThread(time, hardware, platform, trace_output_path)

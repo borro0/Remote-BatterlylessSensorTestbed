@@ -48,12 +48,7 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
   pb_decode(&istream, SimpleMessage_fields, &message);
 
   // update pwm
-  pwm_on_time = message.on_time;
-  pwm_off_time = message.off_time;
-
-  // Increment values as form of response
-  message.on_time += 1;
-  message.off_time += 1;
+  updatePWM(message.on_time, message.off_time);
 
   /* Create a stream that will write to our buffer. */
   pb_ostream_t ostream = pb_ostream_from_buffer(tempBuffer, size);
@@ -63,6 +58,17 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
 
   // send packet
   myPacketSerial.send(tempBuffer, size);  
+}
+
+void updatePWM(int message_on_time, int message_off_time)
+{
+  myTimer.end(); // stop current timer
+  if (message_off_time == 0)
+  {
+    // This means we should power continiously, therefor the timer is not required anymore
+  }
+  pwm_on_time = message_on_time;
+  pwm_off_time = message_off_time;
 }
 
 void handlePWM() {
